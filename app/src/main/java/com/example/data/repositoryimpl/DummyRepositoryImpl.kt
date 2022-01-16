@@ -10,7 +10,7 @@ class DummyRepositoryImpl @Inject constructor(
     private val dummySrc: DummySrc,
     private val dummyMapper: DummyMapper
 ) : DummyRepository {
-    override fun getDummyData(): Result<DummyUiModel> {
+    override suspend fun getDummyData(): Result<DummyUiModel> {
         return dummyMapper.mapFrom(dummySrc.getDummyData())
     }
 }

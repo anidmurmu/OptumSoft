@@ -5,14 +5,13 @@ import com.example.domain.repository.DummyRepository
 import javax.inject.Inject
 
 interface GetDummyDataUseCase {
-    fun getDummyData(): Result<DummyUiModel>
+    suspend fun getDummyData(): Result<DummyUiModel>
 }
 
 class GetDummyDataUseCaseImpl @Inject constructor(
     private val dummyRepository: DummyRepository
 ) : GetDummyDataUseCase {
-    override fun getDummyData(): Result<DummyUiModel> {
-        //return Result.success(DummyUiModel("dummyKey", "dummyValue"))
+    override suspend fun getDummyData(): Result<DummyUiModel> {
         return dummyRepository.getDummyData()
     }
 }
