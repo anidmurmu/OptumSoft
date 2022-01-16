@@ -1,0 +1,9 @@
+com/example/domain/BuildConfig.java
+ com.example.domain.BuildConfig
+hilt_aggregated_deps/_com_example_domain_usecase_dummy_di_DummyUseCaseModule.java
+ hilt_aggregated_deps._com_example_domain_usecase_dummy_di_DummyUseCaseModule
+com/example/domain/usecase/dummy/GetDummyDataUseCaseImpl_Factory.java
+ com.example.domain.usecase.dummy.GetDummyDataUseCaseImpl_Factory
+ com.example.domain.usecase.dummy.GetDummyDataUseCaseImpl_Factory$InstanceHolder
+com/example/domain/usecase/dummy/di/DummyUseCaseModule_ProvideGetDummyDataUseCaseFactory.java
+ com.example.domain.usecase.dummy.di.DummyUseCaseModule_ProvideGetDummyDataUseCaseFactory

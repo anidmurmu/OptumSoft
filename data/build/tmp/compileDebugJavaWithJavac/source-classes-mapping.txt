@@ -1,0 +1,14 @@
+hilt_aggregated_deps/_com_example_data_repositoryimpl_di_DummyRepositoryModule.java
+ hilt_aggregated_deps._com_example_data_repositoryimpl_di_DummyRepositoryModule
+com/example/data/BuildConfig.java
+ com.example.data.BuildConfig
+com/example/data/mapper/DummyMapper_Factory.java
+ com.example.data.mapper.DummyMapper_Factory
+ com.example.data.mapper.DummyMapper_Factory$InstanceHolder
+com/example/data/repositoryimpl/di/DummyRepositoryModule_ProvideDummyRepositoryFactory.java
+ com.example.data.repositoryimpl.di.DummyRepositoryModule_ProvideDummyRepositoryFactory
+com/example/data/source/dummy/DummySrc_Factory.java
+ com.example.data.source.dummy.DummySrc_Factory
+ com.example.data.source.dummy.DummySrc_Factory$InstanceHolder
+com/example/data/repositoryimpl/DummyRepositoryImpl_Factory.java
+ com.example.data.repositoryimpl.DummyRepositoryImpl_Factory
