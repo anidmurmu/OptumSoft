@@ -27,16 +27,17 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(MainViewState.Initial)
     val viewState: StateFlow<MainViewState> = _viewState.asStateFlow()
 
-    private fun getDummyData() {
+    fun getDummyData() {
         var result = DummyUiModel("key", "errorResult")
         viewModelScope.launch(dispatcherProvider.io) {
             getDummyDataUseCase.getDummyData()
                 .onSuccess {
                     result = result.copy(dummyValue = it.dummyValue)
-                    _viewState.value = MainViewState.HasData(result.dummyValue)
+                    _viewState.value = MainViewState.Success(result.dummyValue)
                 }
                 .onFailure {
                     Log.e("apple", it.toString())
+                    _viewState.value = MainViewState.Failure
                 }
         }
     }

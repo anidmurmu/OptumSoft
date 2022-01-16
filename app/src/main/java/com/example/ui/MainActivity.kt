@@ -28,8 +28,11 @@ class MainActivity : AppCompatActivity() {
                     when (uiState) {
                         is MainViewState.Initial -> {
                         }
-                        is MainViewState.HasData -> {
+                        is MainViewState.Success -> {
                             dummyTextView.text = uiState.str
+                        }
+                        is MainViewState.Failure -> {
+
                         }
                     }
                 }
