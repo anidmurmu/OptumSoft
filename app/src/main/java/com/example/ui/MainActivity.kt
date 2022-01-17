@@ -30,9 +30,10 @@ class MainActivity : AppCompatActivity() {
         val dummyTextView = findViewById<TextView>(R.id.tvDummyText)
 
         mSocket = getSocket()
-        connectToSocket(mSocket)
         mSocket?.subscribeToSensor("temperature0")
         mSocket?.registerListener("connection", onSubscribeListener)
+        mSocket?.registerListener("data", onDataUpdatedListener)
+        connectToSocket(mSocket)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -57,18 +58,15 @@ class MainActivity : AppCompatActivity() {
         disconnectFromSocket(mSocket)
         mSocket?.unsubscribeFromSensor("temperature0")
         mSocket?.unregisterListener("connection", onSubscribeListener)
+        mSocket?.unregisterListener("data", onDataUpdatedListener)
     }
 
     private val onSubscribeListener = Emitter.Listener { args ->
         //val jsonObj = args[0] as JSONObject
         Log.d("apple", "onConnectionListener")
-        runOnUiThread(Runnable {
-            Log.d("apple", "onConnectionListener")
-            Toast.makeText(this, "toast", Toast.LENGTH_SHORT).show()
-        })
     }
 
     private val onDataUpdatedListener = Emitter.Listener { args ->
-
+        Log.d("apple", "onDataUpdateListener")
     }
 }
