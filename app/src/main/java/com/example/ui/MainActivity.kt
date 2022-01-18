@@ -3,13 +3,13 @@ package com.example.ui
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.optumsoft.R
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -31,23 +31,26 @@ class MainActivity : AppCompatActivity() {
 
         mSocket = getSocket()
         mSocket?.subscribeToSensor("temperature0")
+        mSocket?.subscribeToSensor("temperature1")
         mSocket?.registerListener("connection", onSubscribeListener)
         mSocket?.registerListener("data", onDataUpdatedListener)
         connectToSocket(mSocket)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewState.collect { uiState ->
-                    when (uiState) {
-                        is MainViewState.Initial -> {
-                        }
-                        is MainViewState.Success -> {
-                            dummyTextView.text = uiState.str
-                        }
-                        is MainViewState.Failure -> {
 
-                        }
-                    }
+            }
+        }
+
+        viewModel.viewState.observe(this) { uiState ->
+            when (uiState) {
+                is MainViewState.Initial -> {
+                }
+                is MainViewState.Success -> {
+                    dummyTextView.text = uiState.str
+                }
+                is MainViewState.Failure -> {
+
                 }
             }
         }
@@ -57,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         disconnectFromSocket(mSocket)
         mSocket?.unsubscribeFromSensor("temperature0")
+        mSocket?.unsubscribeFromSensor("temperature1")
         mSocket?.unregisterListener("connection", onSubscribeListener)
         mSocket?.unregisterListener("data", onDataUpdatedListener)
     }
@@ -67,6 +71,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onDataUpdatedListener = Emitter.Listener { args ->
-        Log.d("apple", "onDataUpdateListener")
+        //Log.d("apple", "onDataUpdateListener")
+        val jsonObject = args[0] as JSONObject
+        val gson = GsonBuilder().create()
+        val pojo = gson.toJson(jsonObject)
+        Log.d("apple pojo", pojo.toString())
     }
 }

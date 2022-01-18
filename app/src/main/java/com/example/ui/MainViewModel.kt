@@ -1,6 +1,8 @@
 package com.example.ui
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.dummy.DummyUiModel
@@ -23,9 +25,9 @@ class MainViewModel @Inject constructor(
         getDummyData()
     }
 
-    private val _viewState: MutableStateFlow<MainViewState> =
-        MutableStateFlow(MainViewState.Initial)
-    val viewState: StateFlow<MainViewState> = _viewState.asStateFlow()
+    private val _viewState: MutableLiveData<MainViewState> =
+        MutableLiveData(MainViewState.Initial)
+    val viewState: LiveData<MainViewState> = _viewState
 
     fun getDummyData() {
         var result = DummyUiModel("key", "errorResult")
@@ -33,11 +35,11 @@ class MainViewModel @Inject constructor(
             getDummyDataUseCase.getDummyData()
                 .onSuccess {
                     result = result.copy(dummyValue = it.dummyValue)
-                    _viewState.value = MainViewState.Success(result.dummyValue)
+                    _viewState.postValue(MainViewState.Success(result.dummyValue))
                 }
                 .onFailure {
                     Log.e("apple", it.toString())
-                    _viewState.value = MainViewState.Failure
+                    _viewState.postValue(MainViewState.Failure)
                 }
         }
     }
