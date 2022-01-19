@@ -36,11 +36,17 @@ class MainActivity : AppCompatActivity() {
         mSocket?.registerListener("data", onDataUpdatedListener)
         connectToSocket(mSocket)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        val socket = getSocket1("/sensornames")
+        socket?.on(Socket.EVENT_CONNECT, Emitter.Listener {
+            val result = it as Array<*>
+            //Log.d("endpoint", result.toString())
+            Log.d("endpoint", "apple")
+        })
 
-            }
+        socket?.registerListener("connection") {
+            Log.d("pineapple", "pineapple")
         }
+        socket?.connect()
 
         viewModel.viewState.observe(this) { uiState ->
             when (uiState) {
@@ -67,14 +73,24 @@ class MainActivity : AppCompatActivity() {
 
     private val onSubscribeListener = Emitter.Listener { args ->
         //val jsonObj = args[0] as JSONObject
-        Log.d("apple", "onConnectionListener")
+        Log.d("orange", "onConnectionListener")
     }
 
     private val onDataUpdatedListener = Emitter.Listener { args ->
-        //Log.d("apple", "onDataUpdateListener")
-        val jsonObject = args[0] as JSONObject
         val gson = GsonBuilder().create()
-        val pojo = gson.toJson(jsonObject)
-        Log.d("apple pojo", pojo.toString())
+        //Log.d("apple", "onDataUpdateListener")
+        Log.d("dekho", args[0].toString())
+        //val jsonStr = gson.to
+        val jsonStr = args[0].toString()
+        val jsonObject = args[0] as JSONObject
+        val json = gson.toJson(jsonObject)
+        val jsonPojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.toJsonTree(NetworkModel::class.java)
+        Log.d("apple json", json)
+        Log.d("apple jsonobj", jsonObject.toString())
+        Log.d("apple jsonPojo", jsonPojo.toString())
+        //Log.d("apple pojo", pojo.toString())
+        //if (pojo.)
     }
 }

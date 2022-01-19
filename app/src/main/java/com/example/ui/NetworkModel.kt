@@ -18,11 +18,11 @@ data class NetworkModel(
 
     @SerializedName("key")
     @Expose
-    val sensorTimeUnit: Double?,
+    val sensorTimeUnit: String?,
 
     @SerializedName("val")
     @Expose
-    val sensorReading: Double?,
+    val sensorReading: String?,
 
     @SerializedName("sensor")
     @Expose
@@ -36,9 +36,9 @@ data class NetworkModel(
 data class SensorData(
     @SerializedName("key")
     @Expose
-    val time: Double?,
+    val time: String?,
 
     @SerializedName("val")
     @Expose
-    val reading: Double?
+    val reading: String?
 )
