@@ -1,6 +1,6 @@
 package com.example.domain.usecase.dummy.di
 
-import com.example.domain.repository.DummyRepository
+import com.example.domain.repository.dummy.DummyRepository
 import com.example.domain.usecase.dummy.GetDummyDataUseCase
 import com.example.domain.usecase.dummy.GetDummyDataUseCaseImpl
 import dagger.Module

@@ -5,14 +5,13 @@ import com.example.data.mapper.DummyMapper
 import com.example.data.repositoryimpl.DummyRepositoryImpl
 import com.example.data.source.dummy.DummySrc
 import com.example.domain.model.dummy.DummyUiModel
-import com.example.domain.repository.DummyRepository
+import com.example.domain.repository.dummy.DummyRepository
 import com.example.domain.usecase.dummy.GetDummyDataUseCase
 import com.example.domain.usecase.dummy.GetDummyDataUseCaseImpl
 import com.example.ui.dispatcher.DispatcherProvider
 import com.example.ui.dispatcher.TestDispatcherProvider
 import com.google.common.truth.Truth
 import io.mockk.coEvery
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After

@@ -1,4 +1,4 @@
-package com.example.domain.repository
+package com.example.domain.repository.dummy
 
 import com.example.domain.model.dummy.DummyUiModel
 

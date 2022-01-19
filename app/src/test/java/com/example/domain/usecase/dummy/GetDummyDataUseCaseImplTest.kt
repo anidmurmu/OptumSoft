@@ -1,7 +1,7 @@
 package com.example.domain.usecase.dummy
 
 import com.example.domain.model.dummy.DummyUiModel
-import com.example.domain.repository.DummyRepository
+import com.example.domain.repository.dummy.DummyRepository
 import com.google.common.truth.Truth
 import io.mockk.coEvery
 import io.mockk.mockk

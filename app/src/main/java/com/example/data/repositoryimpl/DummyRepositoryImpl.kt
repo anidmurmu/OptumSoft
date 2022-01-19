@@ -3,7 +3,7 @@ package com.example.data.repositoryimpl
 import com.example.data.mapper.DummyMapper
 import com.example.data.source.dummy.DummySrc
 import com.example.domain.model.dummy.DummyUiModel
-import com.example.domain.repository.DummyRepository
+import com.example.domain.repository.dummy.DummyRepository
 import javax.inject.Inject
 
 class DummyRepositoryImpl @Inject constructor(
