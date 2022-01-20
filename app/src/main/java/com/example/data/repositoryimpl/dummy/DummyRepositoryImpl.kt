@@ -1,6 +1,6 @@
-package com.example.data.repositoryimpl
+package com.example.data.repositoryimpl.dummy
 
-import com.example.data.mapper.DummyMapper
+import com.example.data.mapper.dummy.DummyMapper
 import com.example.data.source.dummy.DummySrc
 import com.example.domain.model.dummy.DummyUiModel
 import com.example.domain.repository.dummy.DummyRepository

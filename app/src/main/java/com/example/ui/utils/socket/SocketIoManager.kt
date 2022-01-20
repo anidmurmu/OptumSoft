@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.ui.utils.socket
 
 import android.util.Log
 import io.socket.client.IO

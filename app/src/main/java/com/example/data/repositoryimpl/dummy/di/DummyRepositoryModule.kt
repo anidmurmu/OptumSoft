@@ -1,7 +1,7 @@
-package com.example.data.repositoryimpl.di
+package com.example.data.repositoryimpl.dummy.di
 
-import com.example.data.mapper.DummyMapper
-import com.example.data.repositoryimpl.DummyRepositoryImpl
+import com.example.data.mapper.dummy.DummyMapper
+import com.example.data.repositoryimpl.dummy.DummyRepositoryImpl
 import com.example.data.source.dummy.DummySrc
 import com.example.domain.repository.dummy.DummyRepository
 import dagger.Module

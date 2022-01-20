@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.ui.sensor
 
 sealed class MainViewState {
     object Initial : MainViewState()

@@ -1,19 +1,17 @@
-package com.example.ui
+package com.example.ui.sensor
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.optumsoft.R
+import com.example.ui.*
+import com.example.ui.utils.socket.*
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 
@@ -26,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel.getSensorList()
 
         val dummyTextView = findViewById<TextView>(R.id.tvDummyText)
 

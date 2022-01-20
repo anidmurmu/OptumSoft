@@ -1,4 +1,4 @@
-package com.example.ui.dispatcher
+package com.example.ui.utils.dispatcher
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

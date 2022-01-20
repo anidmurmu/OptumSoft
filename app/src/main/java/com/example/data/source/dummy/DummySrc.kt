@@ -1,6 +1,6 @@
 package com.example.data.source.dummy
 
-import com.example.data.entity.DummySrcModel
+import com.example.data.entity.dummy.DummySrcModel
 import javax.inject.Inject
 
 class DummySrc @Inject constructor() {

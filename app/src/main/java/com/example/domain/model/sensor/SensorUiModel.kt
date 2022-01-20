@@ -15,3 +15,9 @@ data class SensorReadingUiModel(
     val time: String?,
     val reading: String?
 )
+
+data class SensorConfigUiModel(
+    val name: String,
+    val time: Int,
+    val reading: Int
+)

@@ -1,6 +1,6 @@
-package com.example.data.mapper
+package com.example.data.mapper.dummy
 
-import com.example.data.entity.DummySrcModel
+import com.example.data.entity.dummy.DummySrcModel
 import com.example.domain.mapper.Mapper
 import com.example.domain.model.dummy.DummyUiModel
 import javax.inject.Inject

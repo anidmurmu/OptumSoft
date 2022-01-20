@@ -1,15 +1,17 @@
 package com.example.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.data.mapper.DummyMapper
-import com.example.data.repositoryimpl.DummyRepositoryImpl
+import com.example.data.mapper.dummy.DummyMapper
+import com.example.data.repositoryimpl.dummy.DummyRepositoryImpl
 import com.example.data.source.dummy.DummySrc
 import com.example.domain.model.dummy.DummyUiModel
 import com.example.domain.repository.dummy.DummyRepository
 import com.example.domain.usecase.dummy.GetDummyDataUseCase
 import com.example.domain.usecase.dummy.GetDummyDataUseCaseImpl
-import com.example.ui.dispatcher.DispatcherProvider
-import com.example.ui.dispatcher.TestDispatcherProvider
+import com.example.ui.sensor.MainViewModel
+import com.example.ui.sensor.MainViewState
+import com.example.ui.utils.dispatcher.DispatcherProvider
+import com.example.ui.utils.dispatcher.TestDispatcherProvider
 import com.google.common.truth.Truth
 import io.mockk.coEvery
 import kotlinx.coroutines.ExperimentalCoroutinesApi

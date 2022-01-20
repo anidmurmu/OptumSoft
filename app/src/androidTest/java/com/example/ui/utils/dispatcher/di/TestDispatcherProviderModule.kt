@@ -1,7 +1,7 @@
-package com.example.ui.dispatcher.di
+package com.example.ui.utils.dispatcher.di
 
-import com.example.ui.dispatcher.DispatcherProvider
-import com.example.ui.dispatcher.TestDispatcherProvider
+import com.example.ui.utils.dispatcher.DispatcherProvider
+import com.example.ui.utils.dispatcher.TestDispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

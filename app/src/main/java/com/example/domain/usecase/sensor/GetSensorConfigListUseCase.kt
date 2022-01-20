@@ -1,17 +1,17 @@
 package com.example.domain.usecase.sensor
 
-import com.example.domain.model.sensor.SensorUiModel
+import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.domain.repository.sensor.SensorRepository
 import javax.inject.Inject
 
 interface GetSensorConfigListUseCase {
-    suspend fun getSensorConfigList(): Result<List<SensorUiModel>>
+    suspend fun getSensorConfigList(): Result<List<SensorConfigUiModel>>
 }
 
 class GetSensorConfigListUseCaseImpl @Inject constructor(
     private val sensorRepository: SensorRepository
 ) : GetSensorConfigListUseCase {
-    override suspend fun getSensorConfigList(): Result<List<SensorUiModel>> {
+    override suspend fun getSensorConfigList(): Result<List<SensorConfigUiModel>> {
         return sensorRepository.getSensorConfigList()
     }
 }
