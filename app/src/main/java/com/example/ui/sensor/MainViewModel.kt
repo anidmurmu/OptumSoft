@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.dummy.DummyUiModel
 import com.example.domain.usecase.dummy.GetDummyDataUseCase
+import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val getDummyDataUseCase: GetDummyDataUseCase,
-    private val getSensorListUseCase: GetSensorListUseCase
+    private val getSensorListUseCase: GetSensorListUseCase,
+    private val getSensorConfigListUseCase: GetSensorConfigListUseCase
 ) : ViewModel() {
 
     init {
@@ -37,6 +39,18 @@ class MainViewModel @Inject constructor(
                 }
                 .onSuccess {
                     Log.d("apple2", it.toString())
+                }
+        }
+    }
+
+    fun getSensorConfigList() {
+        viewModelScope.launch(dispatcherProvider.io) {
+            getSensorConfigListUseCase.getSensorConfigList()
+                .onFailure {
+                    Log.e("orange", (it as Exception).toString())
+                }
+                .onSuccess {
+                    Log.d("orange", it.size.toString())
                 }
         }
     }

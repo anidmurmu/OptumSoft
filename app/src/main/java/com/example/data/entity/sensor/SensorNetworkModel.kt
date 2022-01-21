@@ -44,14 +44,15 @@ data class SensorReadingNetworkModel(
 )
 
 data class SensorConfigNetworkModel(
-    @SerializedName("name")
-    @Expose
-    val name: String,
-    @SerializedName("key")
-    @Expose
-    val time: String?,
+    val nameToSensorReading: Map<String, SensorRangeNetworkModel>
+)
 
-    @SerializedName("val")
+data class SensorRangeNetworkModel(
+    @SerializedName("min")
     @Expose
-    val reading: String?
+    val min: Int,
+
+    @SerializedName("max")
+    @Expose
+    val max: Int
 )

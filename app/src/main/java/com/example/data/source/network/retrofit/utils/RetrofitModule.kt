@@ -2,6 +2,7 @@ package com.example.data.source.network.retrofit.utils
 
 import com.example.data.source.network.retrofit.sensor.SensorService
 import com.example.optumsoft.BuildConfig
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +48,12 @@ object RetrofitModule {
             .client(okHttpClient)
             .addConverterFactory(gsonConverterFactory)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
     }
 
     @Provides

@@ -18,6 +18,6 @@ data class SensorReadingUiModel(
 
 data class SensorConfigUiModel(
     val name: String,
-    val time: Int,
-    val reading: Int
+    val min: Int,
+    val max: Int
 )

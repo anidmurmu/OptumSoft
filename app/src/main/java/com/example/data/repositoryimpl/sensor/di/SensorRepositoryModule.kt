@@ -4,6 +4,7 @@ import com.example.data.mapper.sensor.SensorConfigMapper
 import com.example.data.repositoryimpl.sensor.SensorRepositoryImpl
 import com.example.data.source.network.retrofit.sensor.SensorService
 import com.example.domain.repository.sensor.SensorRepository
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,8 +19,9 @@ class SensorRepositoryModule {
     @ActivityRetainedScoped
     fun provideSensorRepository(
         sensorService: SensorService,
-        sensorConfigMapper: SensorConfigMapper
+        sensorConfigMapper: SensorConfigMapper,
+        gson: Gson
     ): SensorRepository {
-        return SensorRepositoryImpl(sensorService, sensorConfigMapper)
+        return SensorRepositoryImpl(sensorService, sensorConfigMapper, gson)
     }
 }

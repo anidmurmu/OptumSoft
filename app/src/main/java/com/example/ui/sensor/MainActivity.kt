@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewModel.getSensorList()
+        viewModel.getSensorConfigList()
 
         val dummyTextView = findViewById<TextView>(R.id.tvDummyText)
 
