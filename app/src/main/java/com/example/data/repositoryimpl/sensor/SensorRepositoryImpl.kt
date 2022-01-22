@@ -1,8 +1,8 @@
 package com.example.data.repositoryimpl.sensor
 
-import android.util.Log
 import com.example.data.mapper.sensor.SensorConfigMapper
 import com.example.data.source.network.retrofit.sensor.SensorService
+import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.domain.repository.sensor.SensorRepository
 import com.google.gson.Gson
@@ -22,14 +22,12 @@ class SensorRepositoryImpl @Inject constructor(
         return response
     }
 
-    override suspend fun getSensorConfigList(): Result<List<SensorConfigUiModel>> {
+    override suspend fun getSensorConfigList(): Response<List<SensorConfigUiModel>> {
         val response = try {
             val jsonObj = sensorService.getSensorConfig()
-            Log.d("pear1", jsonObj.toString())
-            val result = Result.success(jsonObj)
-            return sensorConfigMapper.mapFrom(jsonObj)
+            sensorConfigMapper.mapFrom(jsonObj)
         } catch (ex: Exception) {
-            Result.failure<List<SensorConfigUiModel>>(ex)
+            Response.Failure(ex)
         }
         return response
     }

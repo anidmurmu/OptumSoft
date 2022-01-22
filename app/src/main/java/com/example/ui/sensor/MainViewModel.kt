@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.dummy.DummyUiModel
+import com.example.domain.model.response.Response
 import com.example.domain.usecase.dummy.GetDummyDataUseCase
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,13 +45,15 @@ class MainViewModel @Inject constructor(
 
     fun getSensorConfigList() {
         viewModelScope.launch(dispatcherProvider.io) {
-            getSensorConfigListUseCase.getSensorConfigList()
-                .onFailure {
-                    Log.e("orange", (it as Exception).toString())
+            val result = getSensorConfigListUseCase.getSensorConfigList()
+            when (result) {
+                is Response.Failure -> {
+                    Log.e("orange", result.error.message.toString())
                 }
-                .onSuccess {
-                    Log.d("orange", it.size.toString())
+                is Response.Success -> {
+                    Log.i("orange success", result.data.toString())
                 }
+            }
         }
     }
 
