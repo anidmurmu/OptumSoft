@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.optumsoft.R
 import com.example.ui.*
 import com.example.ui.utils.socket.*
@@ -31,8 +32,9 @@ class MainActivity : AppCompatActivity() {
         val dummyTextView = findViewById<TextView>(R.id.tvDummyText)
 
         mSocket = getSocket()
-        mSocket?.subscribeToSensor("temperature0")
-        mSocket?.subscribeToSensor("temperature1")
+        /*mSocket?.subscribeToSensor("temperature0")
+        mSocket?.subscribeToSensor("temperature1")*/
+        //registerSensors(viewModel.getSensors())
         mSocket?.registerListener("connection", onSubscribeListener)
         mSocket?.registerListener("data", onDataUpdatedListener)
         connectToSocket(mSocket)
@@ -53,8 +55,8 @@ class MainActivity : AppCompatActivity() {
             when (uiState) {
                 is MainViewState.Initial -> {
                 }
-                is MainViewState.Success -> {
-                    dummyTextView.text = uiState.str
+                is MainViewState.HasConfigList -> {
+                    registerSensors(uiState.sensorConfigList)
                 }
                 is MainViewState.Failure -> {
 
@@ -66,8 +68,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         disconnectFromSocket(mSocket)
-        mSocket?.unsubscribeFromSensor("temperature0")
-        mSocket?.unsubscribeFromSensor("temperature1")
+        /*mSocket?.unsubscribeFromSensor("temperature0")
+        mSocket?.unsubscribeFromSensor("temperature1")*/
+        unregisterSensors(viewModel.getSensors())
         mSocket?.unregisterListener("connection", onSubscribeListener)
         mSocket?.unregisterListener("data", onDataUpdatedListener)
     }
@@ -93,5 +96,21 @@ class MainActivity : AppCompatActivity() {
         Log.d("apple jsonPojo", jsonPojo.toString())
         //Log.d("apple pojo", pojo.toString())
         //if (pojo.)
+    }
+
+    private fun registerSensors(sensorList: List<SensorConfigUiModel>) {
+        Log.d("register1 size", sensorList.size.toString())
+        sensorList.forEach {
+            Log.d("register1", it.name)
+            mSocket?.subscribeToSensor(it.name)
+        }
+    }
+
+    private fun unregisterSensors(sensorList: List<SensorConfigUiModel>) {
+        Log.d("unregister size", sensorList.size.toString())
+        sensorList.forEach {
+            Log.d("unregister", it.name)
+            mSocket?.unsubscribeFromSensor(it.name)
+        }
     }
 }
