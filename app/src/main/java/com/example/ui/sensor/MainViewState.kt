@@ -1,12 +1,13 @@
 package com.example.ui.sensor
 
 import com.example.domain.model.sensor.SensorConfigUiModel
-import kotlinx.coroutines.flow.MutableStateFlow
 
-sealed class MainViewState {
-    val sensorConfigs: MutableStateFlow<List<SensorConfigUiModel>> = MutableStateFlow(emptyList())
+/*data class MainViewState(
+    var hasConfigData: Boolean = false,
+    val configList: MutableList<SensorConfigUiModel> = mutableListOf()
+)*/
 
-    object Initial : MainViewState()
-    data class HasConfigList(val sensorConfigList: List<SensorConfigUiModel>) : MainViewState()
-    object Failure : MainViewState()
-}
+data class MainViewState(
+    val hasConfigData: Boolean = false,
+    val configList: List<SensorConfigUiModel> = mutableListOf()
+)

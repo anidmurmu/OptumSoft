@@ -2,12 +2,14 @@ package com.example.ui.sensor
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.optumsoft.R
-import com.example.ui.*
+import com.example.ui.NetworkModel
 import com.example.ui.utils.socket.*
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,20 +31,12 @@ class MainActivity : AppCompatActivity() {
         viewModel.getSensorList()
         viewModel.getSensorConfigList()
 
-        val dummyTextView = findViewById<TextView>(R.id.tvDummyText)
-
         mSocket = getSocket()
-        /*mSocket?.subscribeToSensor("temperature0")
-        mSocket?.subscribeToSensor("temperature1")*/
-        //registerSensors(viewModel.getSensors())
-        mSocket?.registerListener("connection", onSubscribeListener)
-        mSocket?.registerListener("data", onDataUpdatedListener)
         connectToSocket(mSocket)
 
         val socket = getSocket1("/sensornames")
         socket?.on(Socket.EVENT_CONNECT, Emitter.Listener {
             val result = it as Array<*>
-            //Log.d("endpoint", result.toString())
             Log.d("endpoint", "apple")
         })
 
@@ -51,28 +45,26 @@ class MainActivity : AppCompatActivity() {
         }
         socket?.connect()
 
-        viewModel.viewState.observe(this) { uiState ->
-            when (uiState) {
-                is MainViewState.Initial -> {
-                }
-                is MainViewState.HasConfigList -> {
-                    registerSensors(uiState.sensorConfigList)
-                }
-                is MainViewState.Failure -> {
-
+        lifecycleScope.launchWhenStarted {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewState.collect {
+                    handleState(it)
                 }
             }
+        }
+
+    }
+
+    private fun handleState(uiState: MainViewState) {
+        if (uiState.hasConfigData) {
+            viewModel.subscribeSensors()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         disconnectFromSocket(mSocket)
-        /*mSocket?.unsubscribeFromSensor("temperature0")
-        mSocket?.unsubscribeFromSensor("temperature1")*/
         unregisterSensors(viewModel.getSensors())
-        mSocket?.unregisterListener("connection", onSubscribeListener)
-        mSocket?.unregisterListener("data", onDataUpdatedListener)
     }
 
     private val onSubscribeListener = Emitter.Listener { args ->
@@ -98,18 +90,10 @@ class MainActivity : AppCompatActivity() {
         //if (pojo.)
     }
 
-    private fun registerSensors(sensorList: List<SensorConfigUiModel>) {
-        Log.d("register1 size", sensorList.size.toString())
-        sensorList.forEach {
-            Log.d("register1", it.name)
-            mSocket?.subscribeToSensor(it.name)
-        }
-    }
-
     private fun unregisterSensors(sensorList: List<SensorConfigUiModel>) {
-        Log.d("unregister size", sensorList.size.toString())
+        Log.d("unregister123 size", sensorList.size.toString())
         sensorList.forEach {
-            Log.d("unregister", it.name)
+            Log.d("unregister123", it.name)
             mSocket?.unsubscribeFromSensor(it.name)
         }
     }

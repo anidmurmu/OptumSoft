@@ -1,6 +1,5 @@
-package com.example.data.source.network.retrofit.socket
+package com.example.data.source.network.socket_io
 
-import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -10,9 +9,7 @@ fun getSocket(): Socket? {
     var socket: Socket? = null
     try {
         socket = IO.socket("http://interview.optumsoft.com")
-        Log.d("socket", "connected")
     } catch (e: URISyntaxException) {
-        Log.d("socket", "connection failed")
     }
     return socket
 }

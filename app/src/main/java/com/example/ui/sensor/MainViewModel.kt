@@ -1,37 +1,32 @@
 package com.example.ui.sensor
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.dummy.DummyUiModel
 import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
-import com.example.domain.usecase.dummy.GetDummyDataUseCase
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
+import com.example.domain.usecase.socket.SubscribeToSensorUseCase
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
-    //private val getDummyDataUseCase: GetDummyDataUseCase,
     private val getSensorListUseCase: GetSensorListUseCase,
-    private val getSensorConfigListUseCase: GetSensorConfigListUseCase
+    private val getSensorConfigListUseCase: GetSensorConfigListUseCase,
+    private val subscribeToSensorUseCase: SubscribeToSensorUseCase
 ) : ViewModel() {
 
-    private val _viewState: MutableLiveData<MainViewState> =
-        MutableLiveData()
-    val viewState: LiveData<MainViewState> = _viewState
+    private val _viewState: MutableStateFlow<MainViewState> =
+        MutableStateFlow(MainViewState())
+    val viewState: StateFlow<MainViewState> = _viewState
 
-    init {
-        //getDummyData()
-        _viewState.value = MainViewState.Initial
-    }
 
     fun getSensorList() {
         viewModelScope.launch(dispatcherProvider.io) {
@@ -53,39 +48,24 @@ class MainViewModel @Inject constructor(
                     Log.e("orange", result.error.message.toString())
                 }
                 is Response.Success -> {
-                    Log.i("orange success", result.data.toString())
-                   //_viewState.value?.sensorConfigs?.clear()
-                    Log.i("orange before", result.data.toString())
-                    _viewState.value?.sensorConfigs?.value = result.data
-                    //Log.i("orange size after adding", getSensors().size.toString())
-                    //Log.i("orange list after adding", getSensors().toString())
-                    updateViewState(MainViewState.HasConfigList(result.data))
+                    _viewState.value = _viewState.value.copy(configList = result.data)
+                    _viewState.value = _viewState.value.copy(hasConfigData = true)
                 }
+
             }
         }
     }
 
-    private fun updateViewState(state: MainViewState) {
-        _viewState.postValue(state)
+    fun getSensors(): List<SensorConfigUiModel> {
+        return _viewState.value.configList
     }
 
-    /*fun getDummyData() {
-        var result = DummyUiModel("key", "errorResult")
+    fun subscribeSensors() {
+        val sensorList = getSensors()
         viewModelScope.launch(dispatcherProvider.io) {
-            getDummyDataUseCase.getDummyData()
-                .onSuccess {
-                    result = result.copy(dummyValue = it.dummyValue)
-                    //_viewState.postValue(MainViewState.State.Success(result.dummyValue))
-                    _viewState.postValue(MainViewState.Success(result.dummyValue))
-                }
-                .onFailure {
-                    Log.e("apple", it.toString())
-                    _viewState.postValue(MainViewState.Failure)
-                }
+            sensorList.forEach {
+                subscribeToSensorUseCase.subscribeToSensor(it.name)
+            }
         }
-    }*/
-
-    fun getSensors(): List<SensorConfigUiModel> {
-        return viewState.value?.sensorConfigs?.value ?: emptyList()
     }
 }
