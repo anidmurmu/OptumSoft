@@ -1,4 +1,4 @@
-package com.example.ui
+package com.example.ui.sensor
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -10,11 +10,11 @@ data class NetworkModel(
 
     @SerializedName("recent")
     @Expose
-    val recentTimeUnitList: List<SensorData>?,
+    val recentList: List<SensorData>?,
 
     @SerializedName("minute")
     @Expose
-    val minuteTimeUnitList: List<SensorData>?,
+    val minuteList: List<SensorData>?,
 
     @SerializedName("key")
     @Expose

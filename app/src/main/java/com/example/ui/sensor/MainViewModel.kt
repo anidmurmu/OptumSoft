@@ -61,11 +61,23 @@ class MainViewModel @Inject constructor(
     }
 
     fun subscribeSensors() {
-        val sensorList = getSensors()
         viewModelScope.launch(dispatcherProvider.io) {
+            val sensorList = getSensors()
             sensorList.forEach {
+                Log.d("register123", it.name)
                 subscribeToSensorUseCase.subscribeToSensor(it.name)
             }
         }
     }
+
+    /*fun unsubscribeSensors() {
+        //Log.d("unregister123 size", sensorList.size.toString())
+        viewModelScope.launch(dispatcherProvider.io)  {
+            val sensorList = getSensors()
+            sensorList.forEach {
+                Log.d("unregister123", it.name)
+                subscribeToSensorUseCase.subscribeToSensor(it.name, false)
+            }
+        }
+    }*/
 }
