@@ -1,14 +1,17 @@
 package com.example.ui.sensor
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
+import com.example.domain.model.sensor.SensorUiModel
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
 import com.example.domain.usecase.sensor.SubscribeForSensorDataUseCase
 import com.example.domain.usecase.socket.SubscribeToSensorUseCase
+import com.example.ui.utils.base.recyclerview.BaseBindingRVModel
+import com.example.ui.utils.base.viewmodel.BaseViewModel
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +21,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    application: Application,
     private val dispatcherProvider: DispatcherProvider,
     private val getSensorListUseCase: GetSensorListUseCase,
     private val getSensorConfigListUseCase: GetSensorConfigListUseCase,
     private val subscribeToSensorUseCase: SubscribeToSensorUseCase,
     private val subscribeForSensorDataUseCase: SubscribeForSensorDataUseCase
-) : ViewModel() {
+) : BaseViewModel(application) {
 
     private val _viewState: MutableStateFlow<MainViewState> =
         MutableStateFlow(MainViewState())
@@ -38,7 +42,24 @@ class MainViewModel @Inject constructor(
                 }
                 .onSuccess {
                     Log.d("apple2", it.toString())
+                    val modelList = namesToViewableList(it)
+                    _viewState.value.sensorNameList.postValue(modelList)
                 }
+        }
+    }
+
+    private fun namesToViewableList(nameList: List<String>): List<BaseBindingRVModel> {
+        return nameList.map {
+            val sensorModel = SensorUiModel(
+                it,
+                null,
+                null,
+                false,
+                "",
+                null,
+                null
+            )
+            SensorRVModel(sensorModel)
         }
     }
 
@@ -88,7 +109,7 @@ class MainViewModel @Inject constructor(
             Log.d("pear2", "start")
             subscribeForSensorDataUseCase.subscribeForSensorData().collect {
                 Log.d("pear2", "start")
-                when(it) {
+                when (it) {
                     is Response.Success -> {
                         Log.d("pear123", it.data.toString())
                     }
