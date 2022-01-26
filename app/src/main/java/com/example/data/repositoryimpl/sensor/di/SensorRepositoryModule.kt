@@ -23,15 +23,13 @@ class SensorRepositoryModule {
         sensorService: SensorService,
         subscribeToSensorDataSrc: SubscribeToSensorDataSrc,
         sensorConfigMapper: SensorConfigMapper,
-        sensorUiModelMapper: SensorUiModelMapper,
-        gson: Gson
+        sensorUiModelMapper: SensorUiModelMapper
     ): SensorRepository {
         return SensorRepositoryImpl(
             sensorService,
             subscribeToSensorDataSrc,
             sensorConfigMapper,
-            sensorUiModelMapper,
-            gson
+            sensorUiModelMapper
         )
     }
 }

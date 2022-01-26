@@ -8,7 +8,6 @@ import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.domain.model.sensor.SensorUiModel
 import com.example.domain.repository.sensor.SensorRepository
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -16,8 +15,7 @@ class SensorRepositoryImpl @Inject constructor(
     private val sensorService: SensorService,
     private val subscribeToSensorDataSrc: SubscribeToSensorDataSrc,
     private val sensorConfigMapper: SensorConfigMapper,
-    private val sensorUiModelMapper: SensorUiModelMapper,
-    private val gson: Gson
+    private val sensorUiModelMapper: SensorUiModelMapper
 ) : SensorRepository {
     override suspend fun getSensorList(): Result<List<String>> {
         val response = try {

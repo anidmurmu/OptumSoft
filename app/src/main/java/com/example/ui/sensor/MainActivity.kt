@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.getSensorList()
         viewModel.getSensorConfigList()
-        viewModel.subscribeToSensorData()
 
         lifecycleScope.launchWhenStarted {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -51,6 +50,9 @@ class MainActivity : AppCompatActivity() {
     private fun handleState(uiState: MainViewState) {
         if (uiState.hasConfigData) {
             viewModel.subscribeSensors()
+        }
+        if (uiState.hasSensorsSubscribed) {
+            viewModel.subscribeToSensorData()
         }
     }
 }

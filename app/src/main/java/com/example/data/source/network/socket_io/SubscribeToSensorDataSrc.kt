@@ -1,5 +1,6 @@
 package com.example.data.source.network.socket_io
 
+import android.util.Log
 import com.example.data.entity.sensor.SensorNetworkModel
 import com.example.domain.model.response.Response
 import com.google.gson.Gson
@@ -19,6 +20,11 @@ class SubscribeToSensorDataSrc @Inject constructor(
             val result = try {
                 val jsonStr = args[0].toString()
                 val pojo = gson.fromJson(jsonStr, SensorNetworkModel::class.java)
+                if (pojo.type == "update") {
+
+                    Log.d("source1", jsonStr)
+                    //Log.d("source1", pojo.toString())
+                }
                 Response.Success(pojo)
             } catch (ex: Exception) {
                 Response.Failure(ex)

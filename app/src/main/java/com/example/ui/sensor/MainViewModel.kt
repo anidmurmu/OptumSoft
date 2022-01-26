@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
+import com.example.domain.model.sensor.SensorGraphDataUiModel
 import com.example.domain.model.sensor.SensorUiModel
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
@@ -17,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,6 +59,9 @@ class MainViewModel @Inject constructor(
                 false,
                 "",
                 null,
+                null,
+                null,
+                null,
                 null
             )
             SensorRVModel(sensorModel)
@@ -65,8 +70,7 @@ class MainViewModel @Inject constructor(
 
     fun getSensorConfigList() {
         viewModelScope.launch(dispatcherProvider.io) {
-            val result = getSensorConfigListUseCase.getSensorConfigList()
-            when (result) {
+            when (val result = getSensorConfigListUseCase.getSensorConfigList()) {
                 is Response.Failure -> {
                     Log.e("orange", result.error.message.toString())
                 }
@@ -79,16 +83,19 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getSensors(): List<SensorConfigUiModel> {
+    private fun getStoredSensors(): List<SensorConfigUiModel> {
         return _viewState.value.configList
     }
 
     fun subscribeSensors() {
         viewModelScope.launch(dispatcherProvider.io) {
-            val sensorList = getSensors()
-            sensorList.forEach {
-                Log.d("register123", it.name)
-                subscribeToSensorUseCase.subscribeToSensor(it.name)
+            val sensorList = getStoredSensors()
+            sensorList.forEachIndexed { index, sensorConfig ->
+                Log.d("register123", sensorConfig.name)
+                subscribeToSensorUseCase.subscribeToSensor(sensorConfig.name)
+                if (index == sensorList.size - 1) {
+                    _viewState.value = _viewState.value.copy(hasSensorsSubscribed = true)
+                }
             }
         }
     }
@@ -106,12 +113,27 @@ class MainViewModel @Inject constructor(
 
     fun subscribeToSensorData() {
         viewModelScope.launch(dispatcherProvider.io) {
-            Log.d("pear2", "start")
+            val sensorList = getStoredSensors()
+            var index = 0
+            val sensorGraphDataUiModel = _viewState.value.sensorGraphDataUiModel
             subscribeForSensorDataUseCase.subscribeForSensorData().collect {
-                Log.d("pear2", "start")
                 when (it) {
                     is Response.Success -> {
                         Log.d("pear123", it.data.toString())
+                        val sensorUiModel = it.data
+                        val name = if (it.data.type.equals("init", true)) {
+                            if (index < sensorList.size) {
+                                val name = sensorList[index].name
+                                index++
+                                name
+                            } else {
+                                ""
+                            }
+                        } else {
+                            ""
+                        }
+                        val graphDataUiModel =
+                            handleSubscribedData(it.data, sensorGraphDataUiModel, name)
                     }
                     is Response.Failure -> {
                         Log.d("pear123", it.error.toString())
@@ -119,5 +141,55 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun handleSubscribedData(
+        sensorUiModel: SensorUiModel,
+        sensorGraphDataUiModel: SensorGraphDataUiModel,
+        sensorName: String
+    ): SensorGraphDataUiModel {
+        val type = sensorUiModel.type
+        val sortedMap = sensorGraphDataUiModel.sortedMap
+
+        when {
+            type.equals("init", true) -> {
+                if (sensorName.isNotEmpty()) {
+                    handleTypeInit(sortedMap, sensorName, sensorUiModel)
+                    Log.d("rabbit", sensorGraphDataUiModel.sortedMap.toString())
+                }
+            }
+            type.equals("update", true) -> {
+
+            }
+            type.equals("delete", true) -> {
+
+            }
+        }
+
+        return sensorGraphDataUiModel
+    }
+
+    private fun handleTypeInit(
+        sortedMap: SortedMap<String, SensorUiModel>,
+        name: String,
+        sensorUiModel: SensorUiModel
+    ) {
+        sortedMap.putIfAbsent(name, sensorUiModel)
+    }
+
+    private fun handleTypeUpdate(
+        sortedMap: SortedMap<String, SensorUiModel>,
+        name: String,
+        sensorUiModel: SensorUiModel
+    ) {
+
+    }
+
+    private fun handleTypeDelete(
+        sortedMap: SortedMap<String, SensorUiModel>,
+        name: String,
+        sensorUiModel: SensorUiModel
+    ) {
+
     }
 }

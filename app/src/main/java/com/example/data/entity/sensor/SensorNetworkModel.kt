@@ -10,19 +10,19 @@ data class SensorNetworkModel(
 
     @SerializedName("recent")
     @Expose
-    val recentTimeUnitList: List<SensorReadingNetworkModel>?,
+    val recentList: List<SensorReadingNetworkModel>?,
 
     @SerializedName("minute")
     @Expose
-    val minuteTimeUnitList: List<SensorReadingNetworkModel>?,
+    val minuteList: List<SensorReadingNetworkModel>?,
 
     @SerializedName("key")
     @Expose
-    val sensorTimeUnit: String?,
+    val sensorKey: String?,
 
     @SerializedName("val")
     @Expose
-    val sensorReading: String?,
+    val sensorVal: String?,
 
     @SerializedName("sensor")
     @Expose
@@ -41,10 +41,6 @@ data class SensorReadingNetworkModel(
     @SerializedName("val")
     @Expose
     val reading: String?
-)
-
-data class SensorConfigNetworkModel(
-    val nameToSensorReading: Map<String, SensorRangeNetworkModel>
 )
 
 data class SensorRangeNetworkModel(
