@@ -5,14 +5,14 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import java.net.URISyntaxException
 
-fun getSocket(): Socket? {
+/*fun getSocket(): Socket? {
     var socket: Socket? = null
     try {
         socket = IO.socket("http://interview.optumsoft.com")
     } catch (e: URISyntaxException) {
     }
     return socket
-}
+}*/
 
 fun connectToSocket(socket: Socket?) {
     socket?.connect()

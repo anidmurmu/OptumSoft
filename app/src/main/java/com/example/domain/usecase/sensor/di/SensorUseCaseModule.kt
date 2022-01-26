@@ -1,10 +1,7 @@
 package com.example.domain.usecase.sensor.di
 
 import com.example.domain.repository.sensor.SensorRepository
-import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
-import com.example.domain.usecase.sensor.GetSensorConfigListUseCaseImpl
-import com.example.domain.usecase.sensor.GetSensorListUseCase
-import com.example.domain.usecase.sensor.GetSensorListUseCaseImpl
+import com.example.domain.usecase.sensor.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,5 +26,13 @@ class SensorUseCaseModule {
         sensorRepository: SensorRepository
     ): GetSensorConfigListUseCase {
         return GetSensorConfigListUseCaseImpl(sensorRepository)
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideSubscribeForSensorDataUseCase(
+        sensorRepository: SensorRepository
+    ): SubscribeForSensorDataUseCase {
+        return SubscribeForSensorDataUseCaseImpl(sensorRepository)
     }
 }

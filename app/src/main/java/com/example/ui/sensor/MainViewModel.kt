@@ -7,6 +7,7 @@ import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
+import com.example.domain.usecase.sensor.SubscribeForSensorDataUseCase
 import com.example.domain.usecase.socket.SubscribeToSensorUseCase
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ class MainViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val getSensorListUseCase: GetSensorListUseCase,
     private val getSensorConfigListUseCase: GetSensorConfigListUseCase,
-    private val subscribeToSensorUseCase: SubscribeToSensorUseCase
+    private val subscribeToSensorUseCase: SubscribeToSensorUseCase,
+    private val subscribeForSensorDataUseCase: SubscribeForSensorDataUseCase
 ) : ViewModel() {
 
     private val _viewState: MutableStateFlow<MainViewState> =
@@ -80,4 +82,21 @@ class MainViewModel @Inject constructor(
             }
         }
     }*/
+
+    fun subscribeToSensorData() {
+        viewModelScope.launch(dispatcherProvider.io) {
+            Log.d("pear2", "start")
+            subscribeForSensorDataUseCase.subscribeForSensorData().collect {
+                Log.d("pear2", "start")
+                when(it) {
+                    is Response.Success -> {
+                        Log.d("pear123", it.data.toString())
+                    }
+                    is Response.Failure -> {
+                        Log.d("pear123", it.error.toString())
+                    }
+                }
+            }
+        }
+    }
 }

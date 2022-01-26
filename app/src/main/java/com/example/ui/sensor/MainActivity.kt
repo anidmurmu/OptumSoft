@@ -27,23 +27,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mSocket = getSocket()
+        /*mSocket = getSocket()
         Log.d("apple socket", mSocket.toString())
         mSocket?.connect()
         mSocket?.registerListener("data", onDataUpdatedListener)
+        //mSocket?.registerListener("data", onDataUpdatedListener1)
+        //mSocket?.registerListener("data", onDataUpdatedListener2)
         mSocket?.registerListener("connection", onSubscribeListener)
-        mSocket?.subscribeToSensor("temperature0")
-        mSocket?.subscribeToSensor("temperature1")
+        mSocket?.subscribeToSensor("temperature0")*/
+        //mSocket?.subscribeToSensor("temperature1")
 
-        //viewModel.getSensorList()
-        //viewModel.getSensorConfigList()
+        viewModel.getSensorList()
+        viewModel.getSensorConfigList()
+        viewModel.subscribeToSensorData()
 
         // register to listener
 
         lifecycleScope.launchWhenStarted {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.viewState.collect {
-                    //handleState(it)
+                    handleState(it)
                 }
             }
         }
@@ -60,10 +63,10 @@ class MainActivity : AppCompatActivity() {
         //disconnectFromSocket(mSocket)
         //unregisterSensors(viewModel.getSensors())
         //viewModel.unsubscribeSensors()
-        mSocket?.unregisterListener("data", onDataUpdatedListener)
+        /*mSocket?.unregisterListener("data", onDataUpdatedListener)
         mSocket?.unregisterListener("connection", onSubscribeListener)
         mSocket?.unsubscribeFromSensor("temperature0")
-        mSocket?.unsubscribeFromSensor("temperature1")
+        mSocket?.unsubscribeFromSensor("temperature1")*/
     }
 
     private val onSubscribeListener = Emitter.Listener { args ->
@@ -73,6 +76,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onDataUpdatedListener = Emitter.Listener { args ->
+        val gson = GsonBuilder().create()
+        Log.d("apple", "onDataUpdateListener")
+        Log.d("dekho", args[0].toString())
+        //val jsonStr = gson.to
+        val jsonStr = args[0].toString()
+        val jsonObject = args[0] as JSONObject
+        val json = gson.toJson(jsonObject)
+        val jsonPojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.toJsonTree(NetworkModel::class.java)
+        Log.d("apple json", json)
+        Log.d("apple jsonobj", jsonObject.toString())
+        Log.d("apple jsonPojo", jsonPojo.toString())
+        //Log.d("apple pojo", pojo.toString())
+        //if (pojo.)
+    }
+
+    private val onDataUpdatedListener1 = Emitter.Listener { args ->
+        val gson = GsonBuilder().create()
+        Log.d("apple", "onDataUpdateListener")
+        Log.d("dekho", args[0].toString())
+        //val jsonStr = gson.to
+        val jsonStr = args[0].toString()
+        val jsonObject = args[0] as JSONObject
+        val json = gson.toJson(jsonObject)
+        val jsonPojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.fromJson(jsonStr, NetworkModel::class.java)
+        //val pojo = gson.toJsonTree(NetworkModel::class.java)
+        Log.d("apple json", json)
+        Log.d("apple jsonobj", jsonObject.toString())
+        Log.d("apple jsonPojo", jsonPojo.toString())
+        //Log.d("apple pojo", pojo.toString())
+        //if (pojo.)
+    }
+
+    private val onDataUpdatedListener2 = Emitter.Listener { args ->
         val gson = GsonBuilder().create()
         Log.d("apple", "onDataUpdateListener")
         Log.d("dekho", args[0].toString())
