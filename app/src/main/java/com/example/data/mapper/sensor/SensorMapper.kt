@@ -1,6 +1,5 @@
 package com.example.data.mapper.sensor
 
-import android.util.Log
 import com.example.data.entity.sensor.SensorRangeNetworkModel
 import com.example.domain.mapper.Mapper
 import com.example.domain.model.response.Response
