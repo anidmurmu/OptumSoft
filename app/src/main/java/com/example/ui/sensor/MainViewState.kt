@@ -10,5 +10,6 @@ data class MainViewState(
     val configList: List<SensorConfigUiModel> = mutableListOf(),
     val hasSensorsSubscribed: Boolean = false,
     val sensorNameList: MutableLiveData<List<BaseBindingRVModel>> = MutableLiveData(emptyList()),
-    val sensorGraphDataUiModel: SensorGraphDataUiModel = SensorGraphDataUiModel()
+    val sensorGraphDataUiModel: SensorGraphDataUiModel = SensorGraphDataUiModel(),
+    val valueInserted: Boolean = false
 )

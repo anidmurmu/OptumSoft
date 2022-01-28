@@ -8,6 +8,7 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import java.io.File
 import javax.inject.Inject
 
 class SubscribeToSensorDataSrc @Inject constructor(
@@ -20,7 +21,15 @@ class SubscribeToSensorDataSrc @Inject constructor(
             val result = try {
                 val jsonStr = args[0].toString()
                 val pojo = gson.fromJson(jsonStr, SensorNetworkModel::class.java)
-                if (pojo.type == "update") {
+                if (pojo.type == "init") {
+
+                    /*val fileName = "myfile.txt"
+                    val myfile = File(fileName)
+
+                    myfile.bufferedWriter().use { out ->
+
+                        out.write(jsonStr)
+                    }*/
 
                     Log.d("source1", jsonStr)
                     //Log.d("source1", pojo.toString())
@@ -34,7 +43,5 @@ class SubscribeToSensorDataSrc @Inject constructor(
 
         socket?.registerListener("data", listener)
         awaitClose { socket?.unregisterListener("data", listener) }
-
-
     }
 }

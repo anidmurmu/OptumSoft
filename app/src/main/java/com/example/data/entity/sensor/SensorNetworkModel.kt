@@ -36,11 +36,11 @@ data class SensorNetworkModel(
 data class SensorReadingNetworkModel(
     @SerializedName("key")
     @Expose
-    val time: String?,
+    val sensorKey: String?,
 
     @SerializedName("val")
     @Expose
-    val reading: String?
+    val sensorVal: String?
 )
 
 data class SensorRangeNetworkModel(

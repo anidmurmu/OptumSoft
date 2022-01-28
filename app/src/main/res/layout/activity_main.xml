@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         tools:context="com.example.ui.sensor.MainActivity">
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSensorList"
             android:layout_width="0dp"

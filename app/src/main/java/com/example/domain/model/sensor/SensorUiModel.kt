@@ -11,8 +11,8 @@ data class SensorUiModel(
     val scale: String?,
     val sensorKey: String?,
     val sensorVal: String?,
-    val recentList: List<SensorReadingUiModel>?,
-    val minuteList: List<SensorReadingUiModel>?,
+    val recentList: MutableList<SensorReadingUiModel>?,
+    val minuteList: MutableList<SensorReadingUiModel>?,
     val isSelected: Boolean = false
 )
 
@@ -21,8 +21,8 @@ data class SensorGraphDataUiModel(
 )
 
 data class SensorReadingUiModel(
-    val time: String?,
-    val reading: String?
+    val sensorKey: String?,
+    val sensorVal: String?
 )
 
 data class SensorConfigUiModel(

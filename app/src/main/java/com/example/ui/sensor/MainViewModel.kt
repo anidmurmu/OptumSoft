@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.response.Response
 import com.example.domain.model.sensor.SensorConfigUiModel
 import com.example.domain.model.sensor.SensorGraphDataUiModel
+import com.example.domain.model.sensor.SensorReadingUiModel
 import com.example.domain.model.sensor.SensorUiModel
 import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
@@ -90,13 +91,17 @@ class MainViewModel @Inject constructor(
     fun subscribeSensors() {
         viewModelScope.launch(dispatcherProvider.io) {
             val sensorList = getStoredSensors()
-            sensorList.forEachIndexed { index, sensorConfig ->
+            /*sensorList.forEachIndexed { index, sensorConfig ->
                 Log.d("register123", sensorConfig.name)
                 subscribeToSensorUseCase.subscribeToSensor(sensorConfig.name)
                 if (index == sensorList.size - 1) {
                     _viewState.value = _viewState.value.copy(hasSensorsSubscribed = true)
                 }
-            }
+            }*/
+
+            val sensorConfig = sensorList[0]
+            subscribeToSensorUseCase.subscribeToSensor(sensorConfig.name)
+            _viewState.value = _viewState.value.copy(hasSensorsSubscribed = true)
         }
     }
 
@@ -111,7 +116,7 @@ class MainViewModel @Inject constructor(
         }
     }*/
 
-    fun subscribeToSensorData() {
+    /*fun subscribeToSensorData() {
         viewModelScope.launch(dispatcherProvider.io) {
             val sensorList = getStoredSensors()
             var index = 0
@@ -119,7 +124,7 @@ class MainViewModel @Inject constructor(
             subscribeForSensorDataUseCase.subscribeForSensorData().collect {
                 when (it) {
                     is Response.Success -> {
-                        Log.d("pear123", it.data.toString())
+                        Log.d("pear123", it.data.minuteList.toString())
                         val sensorUiModel = it.data
                         val name = if (it.data.type.equals("init", true)) {
                             if (index < sensorList.size) {
@@ -141,6 +146,27 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+    }*/
+
+    fun subscribeToSingleSensorData() {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val sensorList = getStoredSensors()
+            val storedSensorUiModel = sensorList[0]
+            val sensorGraphDataUiModel = _viewState.value.sensorGraphDataUiModel
+            subscribeForSensorDataUseCase.subscribeForSensorData().collect {
+                when (it) {
+                    is Response.Success -> {
+                        Log.d("data1", it.data.toString())
+                        val name = storedSensorUiModel.name
+                        val graphDataUiModel =
+                            handleSubscribedData(it.data, sensorGraphDataUiModel, name)
+                    }
+                    is Response.Failure -> {
+                        Log.d("pear123", it.error.toString())
+                    }
+                }
+            }
+        }
     }
 
     private fun handleSubscribedData(
@@ -150,18 +176,20 @@ class MainViewModel @Inject constructor(
     ): SensorGraphDataUiModel {
         val type = sensorUiModel.type
         val sortedMap = sensorGraphDataUiModel.sortedMap
-
+        Log.d("inside1", "handle")
         when {
             type.equals("init", true) -> {
-                if (sensorName.isNotEmpty()) {
-                    handleTypeInit(sortedMap, sensorName, sensorUiModel)
-                    Log.d("rabbit", sensorGraphDataUiModel.sortedMap.toString())
-                }
+                Log.d("inside1", "init")
+                handleTypeInit(sortedMap, sensorName, sensorUiModel)
+                Log.d("rabbit", sensorGraphDataUiModel.sortedMap.toString())
             }
             type.equals("update", true) -> {
-
+                Log.d("inside1", "update")
+                handleTypeUpdate(sortedMap, sensorUiModel)
             }
             type.equals("delete", true) -> {
+                Log.d("inside1", "delete")
+                handleTypeDelete(sortedMap, sensorUiModel)
 
             }
         }
@@ -174,22 +202,64 @@ class MainViewModel @Inject constructor(
         name: String,
         sensorUiModel: SensorUiModel
     ) {
-        sortedMap.putIfAbsent(name, sensorUiModel)
+        val uiModel = sensorUiModel.copy(name = name)
+        val inserted = sortedMap.putIfAbsent(name, uiModel)
+        Log.d("inside1 insert", inserted.toString())
+        _viewState.value = _viewState.value.copy(valueInserted = true)
     }
 
     private fun handleTypeUpdate(
         sortedMap: SortedMap<String, SensorUiModel>,
-        name: String,
         sensorUiModel: SensorUiModel
     ) {
-
+        val storedSensorUiModel = sortedMap[sensorUiModel.name]
+        val dataList = if (sensorUiModel.scale == "recent") {
+            storedSensorUiModel?.recentList
+        } else {
+            storedSensorUiModel?.minuteList
+        }
+        var isValUpdate = false
+        dataList?.forEachIndexed { index, sensorReadingUiModel ->
+            if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
+                Log.d("value12", sensorReadingUiModel.sensorVal.toString())
+                Log.d("value12", sensorUiModel.sensorVal.toString())
+                val newModel = sensorReadingUiModel.copy(sensorVal = sensorUiModel.sensorVal)
+                Log.d("update1 before", dataList[index].toString())
+                dataList[index] = newModel
+                isValUpdate = true
+                Log.d("update1 after", dataList[index].toString())
+                return
+            }
+        }
+        if (!isValUpdate) {
+            val readingModel = SensorReadingUiModel(
+                sensorUiModel.sensorKey,
+                sensorUiModel.sensorVal
+            )
+            dataList?.add(readingModel)
+        }
     }
 
     private fun handleTypeDelete(
         sortedMap: SortedMap<String, SensorUiModel>,
-        name: String,
         sensorUiModel: SensorUiModel
     ) {
+        val storedSensorUiModel = sortedMap[sensorUiModel.name]
+        val dataList = if (sensorUiModel.scale == "recent") {
+            storedSensorUiModel?.recentList
+        } else {
+            storedSensorUiModel?.minuteList
+        }
+        dataList?.forEachIndexed { index, sensorReadingUiModel ->
+            if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
+                dataList.removeAt(index)
+                return
+            }
+        }
+    }
 
+    fun showGraphList(sortedMap: SortedMap<String, SensorUiModel>, name: String) {
+        Log.d("list1 recent", sortedMap[name]?.recentList.toString())
+        Log.d("list1 minute", sortedMap[name]?.minuteList.toString())
     }
 }

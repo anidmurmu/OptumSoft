@@ -54,12 +54,12 @@ class SensorUiModelMapper @Inject constructor() :
 
     private fun mapToSensorReadingUiModel(
         sensorReadingNetworkModel: List<SensorReadingNetworkModel>?
-    ): List<SensorReadingUiModel>? {
+    ): MutableList<SensorReadingUiModel>? {
         return sensorReadingNetworkModel?.map {
             SensorReadingUiModel(
-                it.time,
-                it.reading
+                it.sensorKey,
+                it.sensorVal
             )
-        }
+        }?.toMutableList()
     }
 }
