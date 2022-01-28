@@ -10,7 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.optumsoft.R
 import com.example.optumsoft.databinding.ActivityMainBinding
+import com.example.ui.sensor.chart.setupGraph
+import com.example.ui.sensor.chart.setupLineDataSet
 import com.example.ui.utils.base.RVModelBindingAdapter
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         )
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+
+        setupGraph(binding.lineChart)
 
         binding.rvSensorList.adapter = RVModelBindingAdapter(
             emptyList(),
@@ -58,12 +68,86 @@ class MainActivity : AppCompatActivity() {
             //viewModel.viewState.value.sensorGraphDataUiModel.sortedMap["temperature0"] = null
             Log.d("name1", viewModel.viewState.value.sensorGraphDataUiModel.toString())
             Log.d("name1", viewModel.viewState.value.sensorGraphDataUiModel.sortedMap.toString())
-            viewModel.showGraphList(viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
-            "temperature0")
+            viewModel.showGraphList(
+                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
+                "temperature0"
+            )
         }
-        if(uiState.valueInserted) {
-            viewModel.showGraphList(viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
-                "temperature0")
+        if (uiState.valueInserted) {
+            viewModel.showGraphList(
+                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
+                "temperature0"
+            )
+            val sensorReadingList = viewModel.initGraph(
+                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
+                "temperature0"
+            )
+            val entryList = sensorReadingList?.mapIndexed { index, sensorReadingUiModel ->
+                Log.d("entry1", sensorReadingUiModel.toString())
+                Entry(index.toFloat(),
+                    sensorReadingUiModel.sensorVal?.toFloat() ?: 0f)
+            }
+            /*val entryList = ArrayList<Entry>()
+            for (i in 0..10) {
+                entryList.add(Entry(i.toFloat(), i*i.toFloat()))
+            }*/
+            plotGraph(binding.lineChart, entryList)
         }
+    }
+
+    private fun plotGraph(chart: LineChart, entryList: List<Entry>?) {
+        /*val data: LineData = chart.data
+        var set: ILineDataSet? = data.getDataSetByIndex(0)
+        if (chart.data != null && chart.data.dataSetCount > 0) {
+            set = chart.data.getDataSetByIndex(0) as LineDataSet
+            set.values = entryList
+            set.notifyDataSetChanged()
+            chart.data.notifyDataChanged()
+            chart.notifyDataSetChanged()
+        } else {
+            *//*set = setupLineDataSet(entryList)
+            data.addDataSet(set)*//*
+            *//*set.values = entryList
+            set.notifyDataSetChanged()
+            chart.data.notifyDataChanged()
+            chart.notifyDataSetChanged()*//*
+
+            val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
+                axisDependency = YAxis.AxisDependency.LEFT
+                lineWidth = 1f
+                circleRadius = 2f
+                valueTextSize = 5f
+                valueTextColor = android.graphics.Color.BLACK
+                color = android.graphics.Color.RED
+                isHighlightEnabled = false
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+                cubicIntensity = 0.2f
+            }
+
+            val dataSets = ArrayList<ILineDataSet>()
+            dataSets.add(lineDataSet)
+
+            val lineData = LineData(dataSets)
+            chart.data = lineData
+        }*/
+
+        val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
+            axisDependency = YAxis.AxisDependency.LEFT
+            lineWidth = 1f
+            circleRadius = 2f
+            valueTextSize = 5f
+            valueTextColor = android.graphics.Color.BLACK
+            color = android.graphics.Color.RED
+            isHighlightEnabled = false
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            cubicIntensity = 0.2f
+        }
+
+        val dataSets = ArrayList<ILineDataSet>()
+        dataSets.add(lineDataSet)
+
+        val lineData = LineData(dataSets)
+        chart.data = lineData
+        chart.invalidate()
     }
 }

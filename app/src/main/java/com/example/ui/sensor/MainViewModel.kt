@@ -182,15 +182,17 @@ class MainViewModel @Inject constructor(
                 Log.d("inside1", "init")
                 handleTypeInit(sortedMap, sensorName, sensorUiModel)
                 Log.d("rabbit", sensorGraphDataUiModel.sortedMap.toString())
+                initGraph(sortedMap, sensorName)
             }
             type.equals("update", true) -> {
                 Log.d("inside1", "update")
                 handleTypeUpdate(sortedMap, sensorUiModel)
+                updateGraph(sortedMap, sensorName)
             }
             type.equals("delete", true) -> {
                 Log.d("inside1", "delete")
                 handleTypeDelete(sortedMap, sensorUiModel)
-
+                updateGraph(sortedMap, sensorName)
             }
         }
 
@@ -219,24 +221,35 @@ class MainViewModel @Inject constructor(
             storedSensorUiModel?.minuteList
         }
         var isValUpdate = false
-        dataList?.forEachIndexed { index, sensorReadingUiModel ->
-            if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
-                Log.d("value12", sensorReadingUiModel.sensorVal.toString())
-                Log.d("value12", sensorUiModel.sensorVal.toString())
-                val newModel = sensorReadingUiModel.copy(sensorVal = sensorUiModel.sensorVal)
-                Log.d("update1 before", dataList[index].toString())
-                dataList[index] = newModel
-                isValUpdate = true
-                Log.d("update1 after", dataList[index].toString())
-                return
+        var newModel: SensorReadingUiModel? = null
+        var idx = 0
+        synchronized(this) {
+            dataList?.forEachIndexed { index, sensorReadingUiModel ->
+                if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
+                    Log.d("value12", sensorReadingUiModel.sensorVal.toString())
+                    Log.d("value12", sensorUiModel.sensorVal.toString())
+                    newModel = SensorReadingUiModel(
+                        sensorReadingUiModel.sensorKey,
+                        sensorReadingUiModel.sensorKey
+                    )
+                    //Log.d("update1 before", dataList[index].toString())
+                    //dataList[index] = newModel
+                    idx = index
+                    isValUpdate = true
+                    //Log.d("update1 after", dataList[index].toString())
+                }
             }
-        }
-        if (!isValUpdate) {
-            val readingModel = SensorReadingUiModel(
-                sensorUiModel.sensorKey,
-                sensorUiModel.sensorVal
-            )
-            dataList?.add(readingModel)
+
+            newModel?.let {
+                dataList?.add(idx, it)
+            }
+            if (!isValUpdate) {
+                val readingModel = SensorReadingUiModel(
+                    sensorUiModel.sensorKey,
+                    sensorUiModel.sensorVal
+                )
+                dataList?.add(readingModel)
+            }
         }
     }
 
@@ -250,10 +263,18 @@ class MainViewModel @Inject constructor(
         } else {
             storedSensorUiModel?.minuteList
         }
-        dataList?.forEachIndexed { index, sensorReadingUiModel ->
-            if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
-                dataList.removeAt(index)
-                return
+        var idx = -1
+        synchronized(this) {
+            dataList?.forEachIndexed { index, sensorReadingUiModel ->
+                if (sensorReadingUiModel.sensorKey.equals(sensorUiModel.sensorKey)) {
+                    //dataList.removeAt(index)
+                    //return
+                    idx = index
+                }
+            }
+
+            if (idx >= 0) {
+                dataList?.removeAt(idx)
             }
         }
     }
@@ -261,5 +282,27 @@ class MainViewModel @Inject constructor(
     fun showGraphList(sortedMap: SortedMap<String, SensorUiModel>, name: String) {
         Log.d("list1 recent", sortedMap[name]?.recentList.toString())
         Log.d("list1 minute", sortedMap[name]?.minuteList.toString())
+    }
+
+    fun initGraph(
+        sortedMap: SortedMap<String, SensorUiModel>,
+        sensorName: String,
+        scale: String = "recent"
+    ): List<SensorReadingUiModel>? {
+        val sensorUiModel = sortedMap[sensorName]
+        val dataList = if (scale == "recent") {
+            sensorUiModel?.recentList
+        } else {
+            sensorUiModel?.minuteList
+        }
+        return dataList
+    }
+
+    fun updateGraph(
+        sortedMap: SortedMap<String, SensorUiModel>,
+        sensorName: String,
+        scale: String = "recent"
+    ) {
+
     }
 }
