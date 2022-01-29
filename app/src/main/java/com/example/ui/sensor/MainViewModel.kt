@@ -305,4 +305,15 @@ class MainViewModel @Inject constructor(
     ) {
 
     }
+
+    fun setScaleTypeToRecent() {
+        _viewState.value = _viewState.value.copy(isScaleTypeRecent = true)
+    }
+    fun setScaleTypeToMinute() {
+        _viewState.value = _viewState.value.copy(isScaleTypeRecent = false)
+    }
+
+    fun showToast(msg: String) {
+        _viewState.value.toastMsg.postValue(msg)
+    }
 }

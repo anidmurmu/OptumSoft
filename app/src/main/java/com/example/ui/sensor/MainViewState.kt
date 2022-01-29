@@ -11,5 +11,7 @@ data class MainViewState(
     val hasSensorsSubscribed: Boolean = false,
     val sensorNameList: MutableLiveData<List<BaseBindingRVModel>> = MutableLiveData(emptyList()),
     val sensorGraphDataUiModel: SensorGraphDataUiModel = SensorGraphDataUiModel(),
-    val valueInserted: Boolean = false
+    val valueInserted: Boolean = false,
+    val isScaleTypeRecent: Boolean = true,
+    val toastMsg: MutableLiveData<String> = MutableLiveData("")
 )

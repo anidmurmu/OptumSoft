@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OptumSoft</string>
+    <string name="menu_recent">Recent</string>
+    <string name="menu_minute">Minute</string>
 </resources>

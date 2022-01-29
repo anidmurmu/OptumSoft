@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/scaleRecent"
+        android:title="@string/menu_recent"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/scaleMinute"
+        android:title="@string/menu_minute"
+        app:showAsAction="never" />
+
+</menu>

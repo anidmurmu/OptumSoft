@@ -2,6 +2,8 @@ package com.example.ui.sensor
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -58,6 +60,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.scale_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.scaleRecent -> {
+                viewModel.setScaleTypeToRecent()
+                //viewModel.showToast("recent is set")
+                true
+            }
+            R.id.scaleMinute -> {
+                viewModel.setScaleTypeToMinute()
+                //viewModel.showToast("minute is set")
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     private fun handleState(uiState: MainViewState) {
         if (uiState.hasConfigData) {
             viewModel.subscribeSensors()
@@ -74,10 +99,10 @@ class MainActivity : AppCompatActivity() {
             )
         }
         if (uiState.valueInserted) {
-            viewModel.showGraphList(
+            /*viewModel.showGraphList(
                 viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
                 "temperature0"
-            )
+            )*/
             val sensorReadingList = viewModel.initGraph(
                 viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
                 "temperature0"
@@ -96,40 +121,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun plotGraph(chart: LineChart, entryList: List<Entry>?) {
-        /*val data: LineData = chart.data
-        var set: ILineDataSet? = data.getDataSetByIndex(0)
-        if (chart.data != null && chart.data.dataSetCount > 0) {
-            set = chart.data.getDataSetByIndex(0) as LineDataSet
-            set.values = entryList
-            set.notifyDataSetChanged()
-            chart.data.notifyDataChanged()
-            chart.notifyDataSetChanged()
-        } else {
-            *//*set = setupLineDataSet(entryList)
-            data.addDataSet(set)*//*
-            *//*set.values = entryList
-            set.notifyDataSetChanged()
-            chart.data.notifyDataChanged()
-            chart.notifyDataSetChanged()*//*
-
-            val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
-                axisDependency = YAxis.AxisDependency.LEFT
-                lineWidth = 1f
-                circleRadius = 2f
-                valueTextSize = 5f
-                valueTextColor = android.graphics.Color.BLACK
-                color = android.graphics.Color.RED
-                isHighlightEnabled = false
-                mode = LineDataSet.Mode.CUBIC_BEZIER
-                cubicIntensity = 0.2f
-            }
-
-            val dataSets = ArrayList<ILineDataSet>()
-            dataSets.add(lineDataSet)
-
-            val lineData = LineData(dataSets)
-            chart.data = lineData
-        }*/
 
         val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
             axisDependency = YAxis.AxisDependency.LEFT
