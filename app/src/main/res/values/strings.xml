@@ -2,4 +2,5 @@
     <string name="app_name">OptumSoft</string>
     <string name="menu_recent">Recent</string>
     <string name="menu_minute">Minute</string>
+    <string name="sensor_title">Sensor Name</string>
 </resources>

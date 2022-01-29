@@ -47,6 +47,7 @@ class SensorUiModelMapper @Inject constructor() :
                 it.sensorVal,
                 mapToSensorReadingUiModel(it.recentList),
                 mapToSensorReadingUiModel(it.minuteList),
+                "#ffffff",
                 false
             )
         }

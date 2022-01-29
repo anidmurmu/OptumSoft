@@ -2,8 +2,8 @@ package com.example.ui.sensor
 
 import androidx.databinding.ViewDataBinding
 import com.example.domain.model.sensor.SensorUiModel
-import com.example.optumsoft.R
 import com.example.optumsoft.BR
+import com.example.optumsoft.R
 import com.example.ui.utils.base.ViewOnClickListener
 import com.example.ui.utils.base.recyclerview.BaseBindingRVModel
 import com.example.ui.utils.base.recyclerview.BaseBindingViewHolder
@@ -48,6 +48,9 @@ class SensorViewHolder(
     private val viewClickCallback: ViewOnClickListener?
 ) : BaseBindingViewHolder<SensorRVModel>(binding) {
     override fun bindView(model: SensorRVModel) {
+        itemView.setOnClickListener {
+            viewClickCallback?.onViewClick(R.id.on_click_sensor_item, model.sensorUiModel)
+        }
     }
 }
 

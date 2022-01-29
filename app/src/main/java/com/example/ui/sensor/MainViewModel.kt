@@ -12,6 +12,7 @@ import com.example.domain.usecase.sensor.GetSensorConfigListUseCase
 import com.example.domain.usecase.sensor.GetSensorListUseCase
 import com.example.domain.usecase.sensor.SubscribeForSensorDataUseCase
 import com.example.domain.usecase.socket.SubscribeToSensorUseCase
+import com.example.optumsoft.R
 import com.example.ui.utils.base.recyclerview.BaseBindingRVModel
 import com.example.ui.utils.base.viewmodel.BaseViewModel
 import com.example.ui.utils.dispatcher.DispatcherProvider
@@ -309,11 +310,60 @@ class MainViewModel @Inject constructor(
     fun setScaleTypeToRecent() {
         _viewState.value = _viewState.value.copy(isScaleTypeRecent = true)
     }
+
     fun setScaleTypeToMinute() {
         _viewState.value = _viewState.value.copy(isScaleTypeRecent = false)
     }
 
     fun showToast(msg: String) {
         _viewState.value.toastMsg.postValue(msg)
+    }
+
+    fun handleSensorItemClick(sensorUiModel: SensorUiModel) {
+        val sensorList = getStoredSensors()
+        val sensorUiModelList = toSensorUiModel(sensorList, sensorUiModel)
+        val viewableList = getSensorViewableList(sensorUiModelList)
+        _viewState.value.sensorNameList.postValue(viewableList)
+    }
+
+    private fun getSensorViewableList(
+        sensorConfigList: List<SensorUiModel>
+    ): List<BaseBindingRVModel> {
+        return sensorConfigList.map {
+            SensorRVModel(it)
+        }
+    }
+
+    private fun toSensorUiModel(
+        sensorConfigList: List<SensorConfigUiModel>,
+        sensorUiModel: SensorUiModel
+    ): List<SensorUiModel> {
+        return sensorConfigList.map {
+            var model = SensorUiModel(
+                it.name,
+                null,
+                null,
+                false,
+                "",
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+            if (sensorUiModel.name.equals(it.name, true)) {
+                model = model.copy(color = "#BEBDBB")
+            }
+            model
+        }
+    }
+
+    override fun onViewClick(id: Int, data: Any) {
+        when (id) {
+            R.id.on_click_sensor_item -> {
+                val sensorUiModel = data as SensorUiModel
+                handleSensorItemClick(sensorUiModel)
+            }
+        }
     }
 }
