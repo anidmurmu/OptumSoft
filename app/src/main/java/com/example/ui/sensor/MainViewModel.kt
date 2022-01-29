@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
     val viewState: StateFlow<MainViewState> = _viewState
 
 
-    fun getSensorList() {
+    fun getSensorNameList() {
         viewModelScope.launch(dispatcherProvider.io) {
             getSensorListUseCase.getSensorList()
                 .onFailure {
@@ -47,15 +47,15 @@ class MainViewModel @Inject constructor(
                 .onSuccess {
                     Log.d("apple2", it.toString())
                     val modelList = namesToViewableList(it)
-                    _viewState.value.sensorNameList.postValue(modelList)
+                    _viewState.value.rvSensorNameList.postValue(modelList)
                 }
         }
     }
 
     private fun namesToViewableList(nameList: List<String>): List<BaseBindingRVModel> {
-        return nameList.map {
-            val sensorModel = SensorUiModel(
-                it,
+        return nameList.mapIndexed { index, name ->
+            var sensorModel = SensorUiModel(
+                name,
                 null,
                 null,
                 false,
@@ -66,6 +66,9 @@ class MainViewModel @Inject constructor(
                 null,
                 null
             )
+            if (index == 0) {
+                sensorModel = sensorModel.copy(color = "#BEBDBB")
+            }
             SensorRVModel(sensorModel)
         }
     }
@@ -77,45 +80,68 @@ class MainViewModel @Inject constructor(
                     Log.e("orange", result.error.message.toString())
                 }
                 is Response.Success -> {
-                    _viewState.value = _viewState.value.copy(configList = result.data)
-                    _viewState.value = _viewState.value.copy(hasConfigData = true)
+                    _viewState.value = _viewState.value.copy(sensorConfigList = result.data)
+                    _viewState.value = _viewState.value.copy(hasSensorConfigList = true)
+                    showInitialSensorList()
                 }
 
             }
         }
     }
 
-    private fun getStoredSensors(): List<SensorConfigUiModel> {
-        return _viewState.value.configList
+    fun showInitialSensorList() {
+        val sensorConfigList = getStoredSensorConfigList()
+        val firstModel = sensorConfigList[0]
+        val model = SensorUiModel(
+            firstModel.name,
+            null,
+            null,
+            false,
+            "",
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+        val sensorUiModelList = toSensorUiModel(sensorConfigList, model)
+        val viewableList = getSensorViewableList(sensorUiModelList)
+        _viewState.value.rvSensorNameList.postValue(viewableList)
+        _viewState.value = _viewState.value.copy(isSensorListShowing = true)
     }
 
-    fun subscribeSensors() {
+    fun getGraphData(sensorName: String): List<SensorReadingUiModel>? {
+        val sensorUiModel = _viewState.value.sensorGraphDataUiModel.sortedMap[sensorName]
+        val isScaleTypeRecent = _viewState.value.isScaleTypeRecent
+        val dataList = if (isScaleTypeRecent) {
+            sensorUiModel?.recentList
+        } else {
+            sensorUiModel?.minuteList
+        }
+        return dataList?.toList()
+    }
+
+    fun getFirstSensorName(): String {
+        return getStoredSensorConfigList()[0].name
+    }
+
+    private fun getStoredSensorConfigList(): List<SensorConfigUiModel> {
+        return _viewState.value.sensorConfigList
+    }
+
+    fun subscribeToSensor(sensorName: String) {
         viewModelScope.launch(dispatcherProvider.io) {
-            val sensorList = getStoredSensors()
-            /*sensorList.forEachIndexed { index, sensorConfig ->
-                Log.d("register123", sensorConfig.name)
-                subscribeToSensorUseCase.subscribeToSensor(sensorConfig.name)
-                if (index == sensorList.size - 1) {
-                    _viewState.value = _viewState.value.copy(hasSensorsSubscribed = true)
-                }
-            }*/
-
-            val sensorConfig = sensorList[0]
-            subscribeToSensorUseCase.subscribeToSensor(sensorConfig.name)
-            _viewState.value = _viewState.value.copy(hasSensorsSubscribed = true)
+            subscribeToSensorUseCase.subscribeToSensor(sensorName)
+            _viewState.value = _viewState.value.copy(isSensorSubscribed = true)
         }
     }
 
-    /*fun unsubscribeSensors() {
-        //Log.d("unregister123 size", sensorList.size.toString())
+    fun unsubscribeFromSensor(sensorName: String) {
         viewModelScope.launch(dispatcherProvider.io)  {
-            val sensorList = getSensors()
-            sensorList.forEach {
-                Log.d("unregister123", it.name)
-                subscribeToSensorUseCase.subscribeToSensor(it.name, false)
-            }
+            subscribeToSensorUseCase.subscribeToSensor(sensorName, false)
+            _viewState.value = _viewState.value.copy(isSensorSubscribed = false)
         }
-    }*/
+    }
 
     /*fun subscribeToSensorData() {
         viewModelScope.launch(dispatcherProvider.io) {
@@ -149,18 +175,15 @@ class MainViewModel @Inject constructor(
         }
     }*/
 
-    fun subscribeToSingleSensorData() {
+    fun subscribeToSensorData(sensorName: String) {
         viewModelScope.launch(dispatcherProvider.io) {
-            val sensorList = getStoredSensors()
-            val storedSensorUiModel = sensorList[0]
             val sensorGraphDataUiModel = _viewState.value.sensorGraphDataUiModel
             subscribeForSensorDataUseCase.subscribeForSensorData().collect {
                 when (it) {
                     is Response.Success -> {
                         Log.d("data1", it.data.toString())
-                        val name = storedSensorUiModel.name
                         val graphDataUiModel =
-                            handleSubscribedData(it.data, sensorGraphDataUiModel, name)
+                            handleSubscribedData(it.data, sensorGraphDataUiModel, sensorName)
                     }
                     is Response.Failure -> {
                         Log.d("pear123", it.error.toString())
@@ -319,11 +342,11 @@ class MainViewModel @Inject constructor(
         _viewState.value.toastMsg.postValue(msg)
     }
 
-    fun handleSensorItemClick(sensorUiModel: SensorUiModel) {
-        val sensorList = getStoredSensors()
+    private fun handleSensorItemClick(sensorUiModel: SensorUiModel) {
+        val sensorList = getStoredSensorConfigList()
         val sensorUiModelList = toSensorUiModel(sensorList, sensorUiModel)
         val viewableList = getSensorViewableList(sensorUiModelList)
-        _viewState.value.sensorNameList.postValue(viewableList)
+        _viewState.value.rvSensorNameList.postValue(viewableList)
     }
 
     private fun getSensorViewableList(

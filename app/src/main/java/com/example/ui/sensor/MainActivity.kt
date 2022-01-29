@@ -10,10 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.domain.model.sensor.SensorReadingUiModel
 import com.example.optumsoft.R
 import com.example.optumsoft.databinding.ActivityMainBinding
 import com.example.ui.sensor.chart.setupGraph
-import com.example.ui.sensor.chart.setupLineDataSet
 import com.example.ui.utils.base.RVModelBindingAdapter
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             SensorVHFactory()
         )
 
-        viewModel.getSensorList()
+        viewModel.getSensorNameList()
         viewModel.getSensorConfigList()
 
         lifecycleScope.launchWhenStarted {
@@ -84,10 +84,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleState(uiState: MainViewState) {
-        if (uiState.hasConfigData) {
-            viewModel.subscribeSensors()
+        if (uiState.hasSensorConfigList) {
+            viewModel.showInitialSensorList()
         }
-        if (uiState.hasSensorsSubscribed) {
+        if (uiState.isSensorListShowing) {
+            /*val sensorName = viewModel.getFirstSensorName()
+            val graphDataList = viewModel.getGraphData(sensorName)
+            Log.d("apple1234", graphDataList.toString())
+            val entryList = toEntryList(graphDataList)
+            plotGraph(binding.lineChart, entryList)*/
+
+            // subscribe karo listener ko
+        }
+        /*if (uiState.hasSensorsSubscribed) {
             //viewModel.subscribeToSensorData()
             viewModel.subscribeToSingleSensorData()
             //viewModel.viewState.value.sensorGraphDataUiModel.sortedMap["temperature0"] = null
@@ -97,12 +106,12 @@ class MainActivity : AppCompatActivity() {
                 viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
                 "temperature0"
             )
-        }
-        if (uiState.valueInserted) {
-            /*viewModel.showGraphList(
+        }*/
+        /*if (uiState.valueInserted) {
+            *//*viewModel.showGraphList(
                 viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
                 "temperature0"
-            )*/
+            )*//*
             val sensorReadingList = viewModel.initGraph(
                 viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
                 "temperature0"
@@ -112,12 +121,21 @@ class MainActivity : AppCompatActivity() {
                 Entry(index.toFloat(),
                     sensorReadingUiModel.sensorVal?.toFloat() ?: 0f)
             }
-            /*val entryList = ArrayList<Entry>()
+            *//*val entryList = ArrayList<Entry>()
             for (i in 0..10) {
                 entryList.add(Entry(i.toFloat(), i*i.toFloat()))
-            }*/
+            }*//*
             plotGraph(binding.lineChart, entryList)
+        }*/
+    }
+
+    private fun toEntryList(sensorReadingList: List<SensorReadingUiModel>?): List<Entry>? {
+        val entryList = sensorReadingList?.mapIndexed { index, sensorReadingUiModel ->
+            Log.d("entry1", sensorReadingUiModel.toString())
+            Entry(index.toFloat(),
+                sensorReadingUiModel.sensorVal?.toFloat() ?: 0f)
         }
+        return entryList
     }
 
     private fun plotGraph(chart: LineChart, entryList: List<Entry>?) {

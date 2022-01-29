@@ -6,12 +6,13 @@ import com.example.domain.model.sensor.SensorGraphDataUiModel
 import com.example.ui.utils.base.recyclerview.BaseBindingRVModel
 
 data class MainViewState(
-    val hasConfigData: Boolean = false,
-    val configList: List<SensorConfigUiModel> = mutableListOf(),
-    val hasSensorsSubscribed: Boolean = false,
-    val sensorNameList: MutableLiveData<List<BaseBindingRVModel>> = MutableLiveData(emptyList()),
+    val hasSensorConfigList: Boolean = false,
+    val sensorConfigList: List<SensorConfigUiModel> = mutableListOf(),
+    val isSensorSubscribed: Boolean = false,
+    val rvSensorNameList: MutableLiveData<List<BaseBindingRVModel>> = MutableLiveData(emptyList()),
     val sensorGraphDataUiModel: SensorGraphDataUiModel = SensorGraphDataUiModel(),
     val valueInserted: Boolean = false,
     val isScaleTypeRecent: Boolean = true,
+    val isSensorListShowing: Boolean = false,
     val toastMsg: MutableLiveData<String> = MutableLiveData("")
 )

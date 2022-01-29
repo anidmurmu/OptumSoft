@@ -1,6 +1,5 @@
 package com.example.data.source.network.socket_io
 
-import android.util.Log
 import com.example.data.entity.sensor.SensorNetworkModel
 import com.example.domain.model.response.Response
 import com.google.gson.Gson
@@ -8,7 +7,6 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import java.io.File
 import javax.inject.Inject
 
 class SubscribeToSensorDataSrc @Inject constructor(
@@ -21,19 +19,6 @@ class SubscribeToSensorDataSrc @Inject constructor(
             val result = try {
                 val jsonStr = args[0].toString()
                 val pojo = gson.fromJson(jsonStr, SensorNetworkModel::class.java)
-                if (pojo.type == "init") {
-
-                    /*val fileName = "myfile.txt"
-                    val myfile = File(fileName)
-
-                    myfile.bufferedWriter().use { out ->
-
-                        out.write(jsonStr)
-                    }*/
-
-                    Log.d("source1", jsonStr)
-                    //Log.d("source1", pojo.toString())
-                }
                 Response.Success(pojo)
             } catch (ex: Exception) {
                 Response.Failure(ex)

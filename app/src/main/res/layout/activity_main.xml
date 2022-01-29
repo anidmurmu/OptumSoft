@@ -28,7 +28,7 @@
             android:id="@+id/rvSensorList"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:data="@{viewModel.viewState.sensorNameList}"
+            app:data="@{viewModel.viewState.rvSensorNameList}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/lineChart"
             app:layout_constraintStart_toStartOf="parent"
