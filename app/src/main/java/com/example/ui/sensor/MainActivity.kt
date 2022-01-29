@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
         viewModel.getSensorNameList()
         viewModel.getSensorConfigList()
 
-        lifecycleScope.launchWhenStarted {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleScope.launchWhenResumed {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.viewState.collect {
                     handleState(it)
                 }
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.scaleRecent -> {
                 viewModel.setScaleTypeToRecent()
                 //viewModel.showToast("recent is set")
@@ -84,56 +84,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleState(uiState: MainViewState) {
-        if (uiState.hasSensorConfigList) {
+        /*if (uiState.hasSensorConfigList) {
             viewModel.showInitialSensorList()
-        }
+        }*/
         if (uiState.isSensorListShowing) {
-            /*val sensorName = viewModel.getFirstSensorName()
+            val sensorName = viewModel.getFirstSensorName()
+            viewModel.subscribeToSensorData(sensorName)
+            viewModel.subscribeToSensor(sensorName)
+        }
+        if (uiState.isSensorSubscribed) {
+            //val sensorName = viewModel.getFirstSensorName()
+            val sensorName = viewModel.getSubscribedSensorName()
+            Log.d("subscribed12345", sensorName)
             val graphDataList = viewModel.getGraphData(sensorName)
             Log.d("apple1234", graphDataList.toString())
             val entryList = toEntryList(graphDataList)
-            plotGraph(binding.lineChart, entryList)*/
-
-            // subscribe karo listener ko
-        }
-        /*if (uiState.hasSensorsSubscribed) {
-            //viewModel.subscribeToSensorData()
-            viewModel.subscribeToSingleSensorData()
-            //viewModel.viewState.value.sensorGraphDataUiModel.sortedMap["temperature0"] = null
-            Log.d("name1", viewModel.viewState.value.sensorGraphDataUiModel.toString())
-            Log.d("name1", viewModel.viewState.value.sensorGraphDataUiModel.sortedMap.toString())
-            viewModel.showGraphList(
-                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
-                "temperature0"
-            )
-        }*/
-        /*if (uiState.valueInserted) {
-            *//*viewModel.showGraphList(
-                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
-                "temperature0"
-            )*//*
-            val sensorReadingList = viewModel.initGraph(
-                viewModel.viewState.value.sensorGraphDataUiModel.sortedMap,
-                "temperature0"
-            )
-            val entryList = sensorReadingList?.mapIndexed { index, sensorReadingUiModel ->
-                Log.d("entry1", sensorReadingUiModel.toString())
-                Entry(index.toFloat(),
-                    sensorReadingUiModel.sensorVal?.toFloat() ?: 0f)
-            }
-            *//*val entryList = ArrayList<Entry>()
-            for (i in 0..10) {
-                entryList.add(Entry(i.toFloat(), i*i.toFloat()))
-            }*//*
             plotGraph(binding.lineChart, entryList)
-        }*/
+        }
     }
 
     private fun toEntryList(sensorReadingList: List<SensorReadingUiModel>?): List<Entry>? {
         val entryList = sensorReadingList?.mapIndexed { index, sensorReadingUiModel ->
-            Log.d("entry1", sensorReadingUiModel.toString())
-            Entry(index.toFloat(),
-                sensorReadingUiModel.sensorVal?.toFloat() ?: 0f)
+            Entry(
+                index.toFloat(),
+                sensorReadingUiModel.sensorVal?.toFloat() ?: 0f
+            )
         }
         return entryList
     }

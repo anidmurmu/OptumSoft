@@ -14,5 +14,6 @@ data class MainViewState(
     val valueInserted: Boolean = false,
     val isScaleTypeRecent: Boolean = true,
     val isSensorListShowing: Boolean = false,
+    val currentSubscribedSensor: String = "",
     val toastMsg: MutableLiveData<String> = MutableLiveData("")
 )

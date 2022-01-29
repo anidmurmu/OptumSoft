@@ -1,6 +1,5 @@
 package com.example.data.mapper.sensor
 
-import android.util.Log
 import com.example.data.entity.sensor.SensorNetworkModel
 import com.example.data.entity.sensor.SensorReadingNetworkModel
 import com.example.domain.mapper.Mapper
@@ -23,10 +22,6 @@ class SensorUiModelMapper @Inject constructor() :
                     }
                     is Response.Success -> {
                         val mappedModel = mapToSensorUiModel(it.data)
-                        if (mappedModel.type == "init") {
-                            Log.d("mapper1", mappedModel.toString())
-                            //Log.d("mapper1", it.data.toString())
-                        }
                         Response.Success(mappedModel)
                     }
                 }
