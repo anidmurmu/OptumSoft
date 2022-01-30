@@ -24,4 +24,6 @@ sealed class State {
     object SensorConfigListShowing : State()
     object SensorSubscribed : State()
     object SensorUnsubscribed : State()
+    object OnSubscriptionChange : State()
+    object UpdateGraph: State()
 }

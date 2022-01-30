@@ -1,5 +1,6 @@
 package com.example.data.source.network.socket_io
 
+import android.util.Log
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 
@@ -16,6 +17,7 @@ fun Socket?.subscribeToSensor(sensorName: String) {
 }
 
 fun Socket?.unsubscribeFromSensor(sensorName: String) {
+    Log.d("unsubscribe12345", sensorName)
     this?.emit("unsubscribe", sensorName)
 }
 

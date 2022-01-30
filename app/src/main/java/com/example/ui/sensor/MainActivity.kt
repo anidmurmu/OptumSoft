@@ -103,11 +103,11 @@ class MainActivity : AppCompatActivity() {
     private fun handleState(uiState: MainViewState) {
         when(uiState.state) {
             State.Initial -> {
-
+                viewModel.subscribeToSensorData1()
             }
             State.SensorConfigListShowing -> {
                 val sensorName = viewModel.getFirstSensorName()
-                viewModel.subscribeToSensorData(sensorName)
+                //viewModel.subscribeToSensorData(sensorName)
                 viewModel.subscribeToSensor(sensorName)
             }
             State.SensorSubscribed -> {
@@ -120,6 +120,22 @@ class MainActivity : AppCompatActivity() {
             }
             State.SensorUnsubscribed -> {
 
+            }
+            State.OnSubscriptionChange -> {
+                val sensorName = viewModel.getSubscribedSensorName()
+                Log.d("changeSub name", sensorName)
+                val graphDataList = viewModel.getGraphData(sensorName)
+                Log.d("changeSub list", graphDataList.toString())
+                val entryList = toEntryList(graphDataList)
+                plotGraph(binding.lineChart, entryList)
+            }
+            State.UpdateGraph -> {
+                val sensorName = viewModel.getSubscribedSensorName()
+                Log.d("changeSub name", sensorName)
+                val graphDataList = viewModel.getGraphData(sensorName)
+                Log.d("changeSub list", graphDataList.toString())
+                val entryList = toEntryList(graphDataList)
+                plotGraph(binding.lineChart, entryList)
             }
         }
     }
