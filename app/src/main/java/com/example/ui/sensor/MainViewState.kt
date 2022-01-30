@@ -15,5 +15,13 @@ data class MainViewState(
     val isScaleTypeRecent: Boolean = true,
     val isSensorListShowing: Boolean = false,
     val currentSubscribedSensor: String = "",
+    val state: State = State.Initial,
     val toastMsg: MutableLiveData<String> = MutableLiveData("")
 )
+
+sealed class State {
+    object Initial : State()
+    object SensorConfigListShowing : State()
+    object SensorSubscribed : State()
+    object SensorUnsubscribed : State()
+}

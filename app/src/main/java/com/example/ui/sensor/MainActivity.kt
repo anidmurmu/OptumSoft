@@ -83,10 +83,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleState(uiState: MainViewState) {
-        /*if (uiState.hasSensorConfigList) {
-            viewModel.showInitialSensorList()
-        }*/
+    /*private fun handleState(uiState: MainViewState) {
         if (uiState.isSensorListShowing) {
             val sensorName = viewModel.getFirstSensorName()
             viewModel.subscribeToSensorData(sensorName)
@@ -100,6 +97,30 @@ class MainActivity : AppCompatActivity() {
             Log.d("apple1234", graphDataList.toString())
             val entryList = toEntryList(graphDataList)
             plotGraph(binding.lineChart, entryList)
+        }
+    }*/
+
+    private fun handleState(uiState: MainViewState) {
+        when(uiState.state) {
+            State.Initial -> {
+
+            }
+            State.SensorConfigListShowing -> {
+                val sensorName = viewModel.getFirstSensorName()
+                viewModel.subscribeToSensorData(sensorName)
+                viewModel.subscribeToSensor(sensorName)
+            }
+            State.SensorSubscribed -> {
+                val sensorName = viewModel.getSubscribedSensorName()
+                Log.d("subscribed12345", sensorName)
+                val graphDataList = viewModel.getGraphData(sensorName)
+                Log.d("apple1234", graphDataList.toString())
+                val entryList = toEntryList(graphDataList)
+                plotGraph(binding.lineChart, entryList)
+            }
+            State.SensorUnsubscribed -> {
+
+            }
         }
     }
 

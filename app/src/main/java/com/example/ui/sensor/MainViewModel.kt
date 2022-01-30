@@ -97,8 +97,7 @@ class MainViewModel @Inject constructor(
         _viewState.value.rvSensorNameList.postValue(viewableList)
         _viewState.value = _viewState.value.copy(
             sensorConfigList = sensorConfigList,
-            hasSensorConfigList = true,
-            isSensorListShowing = true
+            state = State.SensorConfigListShowing
         )
     }
 
@@ -152,9 +151,8 @@ class MainViewModel @Inject constructor(
                 Log.d("before1", sensorName)
                 subscribeToSensorUseCase.subscribeToSensor(sensorName)
                 _viewState.value = _viewState.value.copy(
-                    isSensorListShowing = false,
-                    isSensorSubscribed = true,
-                    currentSubscribedSensor = sensorName
+                    currentSubscribedSensor = sensorName,
+                    state = State.SensorSubscribed
                 )
             }
         }
@@ -167,9 +165,8 @@ class MainViewModel @Inject constructor(
                 subscribeToSensorUseCase.subscribeToSensor(sensorName, false)
             }
             _viewState.value = _viewState.value.copy(
-                isSensorListShowing = false,
-                isSensorSubscribed = false,
-                currentSubscribedSensor = ""
+                currentSubscribedSensor = "",
+                state = State.SensorUnsubscribed
             )
         }
     }
@@ -327,6 +324,19 @@ class MainViewModel @Inject constructor(
     }
 
     private fun handleSensorItemClick(sensorUiModel: SensorUiModel) {
+        updateSelectedItem(sensorUiModel)
+        updateSensorSubscription(sensorUiModel)
+    }
+
+    private fun updateSensorSubscription(sensorUiModel: SensorUiModel) {
+        val subscribedSensorName = getSubscribedSensorName()
+        Log.d("unsub123 prev", subscribedSensorName)
+        Log.d("unsub123 curr", sensorUiModel.name ?: "")
+        unsubscribeFromSensor(subscribedSensorName)
+        subscribeToSensor(sensorUiModel.name ?: "")
+    }
+
+    private fun updateSelectedItem(sensorUiModel: SensorUiModel) {
         val sensorList = getStoredSensorConfigList()
         val sensorUiModelList = toSensorUiModelList(sensorList, sensorUiModel)
         val viewableList = toSensorViewableList(sensorUiModelList)
@@ -370,11 +380,6 @@ class MainViewModel @Inject constructor(
             R.id.on_click_sensor_item -> {
                 val sensorUiModel = data as SensorUiModel
                 handleSensorItemClick(sensorUiModel)
-                val subscribedSensorName = getSubscribedSensorName()
-                Log.d("unsub123 prev", subscribedSensorName)
-                Log.d("unsub123 curr", sensorUiModel.name ?: "")
-                unsubscribeFromSensor(subscribedSensorName)
-                subscribeToSensor(sensorUiModel.name ?: "")
             }
         }
     }
