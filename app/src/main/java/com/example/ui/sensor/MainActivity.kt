@@ -1,7 +1,6 @@
 package com.example.ui.sensor
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -14,15 +13,11 @@ import com.example.domain.model.sensor.SensorReadingUiModel
 import com.example.optumsoft.R
 import com.example.optumsoft.databinding.ActivityMainBinding
 import com.example.ui.sensor.chart.setupGraph
+import com.example.ui.sensor.chart.setupLineDataSet
 import com.example.ui.utils.base.RVModelBindingAdapter
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -63,7 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.graphUpdate.collectLatest {
-                Log.d("onupdate123", "update")
                 updateGraphData()
             }
         }
@@ -78,12 +72,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.scaleRecent -> {
                 viewModel.setScaleTypeToRecent()
-                //viewModel.showToast("recent is set")
                 true
             }
             R.id.scaleMinute -> {
                 viewModel.setScaleTypeToMinute()
-                //viewModel.showToast("minute is set")
                 true
             }
             else -> {
@@ -92,52 +84,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /*private fun handleState(uiState: MainViewState) {
-        if (uiState.isSensorListShowing) {
-            val sensorName = viewModel.getFirstSensorName()
-            viewModel.subscribeToSensorData(sensorName)
-            viewModel.subscribeToSensor(sensorName)
-        }
-        if (uiState.isSensorSubscribed) {
-            //val sensorName = viewModel.getFirstSensorName()
-            val sensorName = viewModel.getSubscribedSensorName()
-            Log.d("subscribed12345", sensorName)
-            val graphDataList = viewModel.getGraphData(sensorName)
-            Log.d("apple1234", graphDataList.toString())
-            val entryList = toEntryList(graphDataList)
-            plotGraph(binding.lineChart, entryList)
-        }
-    }*/
-
     private fun handleState(uiState: MainViewState) {
-        when(uiState.state) {
+        when (uiState.state) {
             State.Initial -> {
-                viewModel.subscribeToSensorData1()
+                viewModel.subscribeToSensorData()
             }
             State.SensorConfigListShowing -> {
                 val sensorName = viewModel.getFirstSensorName()
-                //viewModel.subscribeToSensorData(sensorName)
                 viewModel.subscribeToSensor(sensorName)
             }
             State.SensorSubscribed -> {
-                val sensorName = viewModel.getSubscribedSensorName()
-                Log.d("subscribed12345", sensorName)
-                val graphDataList = viewModel.getGraphData(sensorName)
-                Log.d("apple1234", graphDataList.toString())
-                val entryList = toEntryList(graphDataList)
-                val deviationStr = viewModel.getDeviationStr(sensorName)
-                plotGraph(binding.lineChart, entryList, deviationStr)
+                updateGraphData()
             }
             State.SensorUnsubscribed -> {
 
             }
             State.OnSubscriptionChange -> {
-                /*val sensorName = viewModel.getSubscribedSensorName()
-                Log.d("changeSub name", sensorName)
-                val graphDataList = viewModel.getGraphData(sensorName)
-                Log.d("changeSub list", graphDataList.toString())
-                val entryList = toEntryList(graphDataList)
-                plotGraph(binding.lineChart, entryList)*/
                 updateGraphData()
             }
             State.UpdateGraph -> {
@@ -147,15 +109,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun updateGraphData() {
         val sensorName = viewModel.getSubscribedSensorName()
-        Log.d("changeSub name", sensorName)
         val graphDataList = viewModel.getGraphData(sensorName)
-        Log.d("changeSub list", graphDataList.toString())
         val entryList = toEntryList(graphDataList)
-        val deviationStr = viewModel.getDeviationStr(sensorName)
-        plotGraph(binding.lineChart, entryList, deviationStr)
+        plotGraph(binding.lineChart, entryList)
     }
 
     private fun toEntryList(sensorReadingList: List<SensorReadingUiModel>?): List<Entry>? {
@@ -168,25 +126,7 @@ class MainActivity : AppCompatActivity() {
         return entryList
     }
 
-    private fun plotGraph(chart: LineChart, entryList: List<Entry>?, deviation: String) {
-
-        val lineDataSet = LineDataSet(entryList, deviation).apply {
-            axisDependency = YAxis.AxisDependency.LEFT
-            lineWidth = 1f
-            circleRadius = 3f
-            valueTextSize = 7f
-            valueTextColor = android.graphics.Color.BLACK
-            color = android.graphics.Color.RED
-            isHighlightEnabled = false
-            mode = LineDataSet.Mode.CUBIC_BEZIER
-            cubicIntensity = 0.2f
-        }
-
-        val dataSets = ArrayList<ILineDataSet>()
-        dataSets.add(lineDataSet)
-
-        val lineData = LineData(dataSets)
-        chart.data = lineData
-        chart.invalidate()
+    private fun plotGraph(chart: LineChart, entryList: List<Entry>?) {
+        setupLineDataSet(chart, entryList)
     }
 }

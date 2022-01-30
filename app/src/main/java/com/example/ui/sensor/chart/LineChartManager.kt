@@ -7,6 +7,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 fun setupGraph(chart: LineChart) {
     chart.apply {
@@ -28,19 +29,25 @@ fun setupGraph(chart: LineChart) {
     }
 }
 
-fun setupLineDataSet(entryList: List<Entry>?): LineDataSet {
+fun setupLineDataSet(chart: LineChart, entryList: List<Entry>?) {
     val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
         axisDependency = YAxis.AxisDependency.LEFT
         lineWidth = 1f
-        circleRadius = 2f
-        valueTextSize = 5f
+        circleRadius = 3f
+        valueTextSize = 7f
         valueTextColor = android.graphics.Color.BLACK
         color = android.graphics.Color.RED
         isHighlightEnabled = false
         mode = LineDataSet.Mode.CUBIC_BEZIER
         cubicIntensity = 0.2f
     }
-    return lineDataSet
+
+    val dataSets = ArrayList<ILineDataSet>()
+    dataSets.add(lineDataSet)
+
+    val lineData = LineData(dataSets)
+    chart.data = lineData
+    chart.invalidate()
 }
 
 fun setMinValYLeftAxis(chart: LineChart, minVal: Float = 0f) {

@@ -9,65 +9,49 @@
             name="uiModel"
             type="com.example.domain.model.sensor.SensorUiModel" />
     </data>
-<androidx.cardview.widget.CardView
-    android:id="@+id/cvSensorItem"
-    android:layout_height="50dp"
-    android:layout_width="match_parent"
-    android:elevation="4dp"
-    backgroundColor="@{uiModel.color}"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvSensorItem"
+        backgroundColor="@{uiModel.color}"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="2dp"
+        android:elevation="4dp">
 
-        <TextView
-            android:id="@+id/tvSensorNameTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="@string/sensor_title"
-            android:text="@string/sensor_title"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp">
 
-        <TextView
-            android:id="@+id/tvSensorName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{uiModel.name}"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintTop_toBottomOf="@id/tvSensorNameTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            <TextView
+                android:id="@+id/tvSensorNameTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sensor_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/sensor_title" />
 
-        <TextView
-            android:id="@+id/tvSensorDeviation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{uiModel.viewDeviation}"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            <TextView
+                android:id="@+id/tvSensorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{uiModel.name}"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSensorNameTitle" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>
