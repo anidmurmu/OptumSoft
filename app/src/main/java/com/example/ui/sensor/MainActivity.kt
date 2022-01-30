@@ -22,6 +22,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 
 
 @AndroidEntryPoint
@@ -56,6 +58,13 @@ class MainActivity : AppCompatActivity() {
                 viewModel.viewState.collect {
                     handleState(it)
                 }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.graphUpdate.collectLatest {
+                Log.d("onupdate123", "update")
+                updateGraphData()
             }
         }
     }
@@ -122,22 +131,29 @@ class MainActivity : AppCompatActivity() {
 
             }
             State.OnSubscriptionChange -> {
-                val sensorName = viewModel.getSubscribedSensorName()
+                /*val sensorName = viewModel.getSubscribedSensorName()
                 Log.d("changeSub name", sensorName)
                 val graphDataList = viewModel.getGraphData(sensorName)
                 Log.d("changeSub list", graphDataList.toString())
                 val entryList = toEntryList(graphDataList)
-                plotGraph(binding.lineChart, entryList)
+                plotGraph(binding.lineChart, entryList)*/
+                updateGraphData()
             }
             State.UpdateGraph -> {
-                val sensorName = viewModel.getSubscribedSensorName()
-                Log.d("changeSub name", sensorName)
-                val graphDataList = viewModel.getGraphData(sensorName)
-                Log.d("changeSub list", graphDataList.toString())
-                val entryList = toEntryList(graphDataList)
-                plotGraph(binding.lineChart, entryList)
+                updateGraphData()
             }
         }
+    }
+
+
+
+    private fun updateGraphData() {
+        val sensorName = viewModel.getSubscribedSensorName()
+        Log.d("changeSub name", sensorName)
+        val graphDataList = viewModel.getGraphData(sensorName)
+        Log.d("changeSub list", graphDataList.toString())
+        val entryList = toEntryList(graphDataList)
+        plotGraph(binding.lineChart, entryList)
     }
 
     private fun toEntryList(sensorReadingList: List<SensorReadingUiModel>?): List<Entry>? {

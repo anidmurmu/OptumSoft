@@ -17,8 +17,10 @@ import com.example.ui.utils.base.recyclerview.BaseBindingRVModel
 import com.example.ui.utils.base.viewmodel.BaseViewModel
 import com.example.ui.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -36,6 +38,24 @@ class MainViewModel @Inject constructor(
     private val _viewState: MutableStateFlow<MainViewState> =
         MutableStateFlow(MainViewState())
     val viewState: StateFlow<MainViewState> = _viewState
+
+    private val _graphUpdate: MutableStateFlow<SensorUiModel> = MutableStateFlow(getSensorUiModel())
+    val graphUpdate: StateFlow<SensorUiModel> = _graphUpdate
+
+    private fun getSensorUiModel(): SensorUiModel {
+       return SensorUiModel(
+            "",
+            null,
+            null,
+            false,
+            "",
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+    }
 
 
     fun getSensorNameList() {
@@ -222,16 +242,22 @@ class MainViewModel @Inject constructor(
             type.equals("update", true) -> {
                 Log.d("update123", "update")
                 handleTypeUpdate(sortedMap, sensorUiModel)
-                updateGraph(sortedMap, sensorName)
+                onGraphUpdate()
+                _graphUpdate.value = sensorUiModel
             }
             type.equals("delete", true) -> {
                 Log.d("delete123", "delete")
                 handleTypeDelete(sortedMap, sensorUiModel)
-                updateGraph(sortedMap, sensorName)
+                onGraphUpdate()
+                _graphUpdate.value = sensorUiModel
             }
         }
 
         return sensorGraphDataUiModel
+    }
+
+    fun getIsScaleTypeRecent(): Boolean {
+        return _viewState.value.isScaleTypeRecent
     }
 
     private fun handleTypeInit(
@@ -320,12 +346,8 @@ class MainViewModel @Inject constructor(
         Log.d("list1 minute", sortedMap[name]?.minuteList.toString())
     }
 
-    fun updateGraph(
-        sortedMap: SortedMap<String, SensorUiModel>,
-        sensorName: String,
-        scale: String = "recent"
-    ) {
-
+    fun onGraphUpdate(): Flow<Unit> = flow {
+        emit(Unit)
     }
 
     fun setScaleTypeToRecent() {
