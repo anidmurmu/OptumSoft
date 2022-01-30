@@ -153,6 +153,45 @@ class MainViewModel @Inject constructor(
         return dataList?.toList()
     }
 
+    private fun isDeviated(sensorName: String): Boolean {
+        val sensorUiModel = _viewState.value.sensorGraphDataUiModel.sortedMap[sensorName]
+        val isScaleTypeRecent = _viewState.value.isScaleTypeRecent
+        val dataList = if (isScaleTypeRecent) {
+            sensorUiModel?.recentList
+        } else {
+            sensorUiModel?.minuteList
+        }
+
+        var isDeviated = false
+        val sensorConfigList = _viewState.value.sensorConfigList
+        var sensorConfigUiModel: SensorConfigUiModel? = null
+        sensorConfigList.forEach{
+            if (it.name.equals(sensorName, true)) {
+                sensorConfigUiModel = it
+            }
+        }
+        sensorConfigUiModel?.let { sensorConfig ->
+            dataList?.forEach { sensorReading ->
+                sensorReading.sensorVal?.let {
+                    if (it.toFloat().toInt() >= sensorConfig.min
+                        && it.toFloat().toInt() <= sensorConfig.max) {
+                        isDeviated = true
+                    }
+                }
+            }
+        }
+        return isDeviated
+    }
+
+    fun getDeviationStr(sensorName: String): String {
+        val isDeviated = isDeviated(sensorName)
+        return if (isDeviated) {
+            "Deviation : " + "Yes"
+        } else {
+            "Deviation : " + "No"
+        }
+    }
+
     fun getFirstSensorName(): String {
         return getStoredSensorConfigList()[0].name
     }

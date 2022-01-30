@@ -1,6 +1,5 @@
 package com.example.domain.model.sensor
 
-import android.graphics.Color
 import java.util.*
 
 data class SensorUiModel(
@@ -15,6 +14,7 @@ data class SensorUiModel(
     val recentList: MutableList<SensorReadingUiModel>?,
     val minuteList: MutableList<SensorReadingUiModel>?,
     val color: String = "#ffffff",
+    val viewDeviation: String = "Deviation : N/A",
     val isSelected: Boolean = false
 )
 

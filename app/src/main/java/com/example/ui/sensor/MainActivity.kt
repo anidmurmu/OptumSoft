@@ -125,7 +125,8 @@ class MainActivity : AppCompatActivity() {
                 val graphDataList = viewModel.getGraphData(sensorName)
                 Log.d("apple1234", graphDataList.toString())
                 val entryList = toEntryList(graphDataList)
-                plotGraph(binding.lineChart, entryList)
+                val deviationStr = viewModel.getDeviationStr(sensorName)
+                plotGraph(binding.lineChart, entryList, deviationStr)
             }
             State.SensorUnsubscribed -> {
 
@@ -153,7 +154,8 @@ class MainActivity : AppCompatActivity() {
         val graphDataList = viewModel.getGraphData(sensorName)
         Log.d("changeSub list", graphDataList.toString())
         val entryList = toEntryList(graphDataList)
-        plotGraph(binding.lineChart, entryList)
+        val deviationStr = viewModel.getDeviationStr(sensorName)
+        plotGraph(binding.lineChart, entryList, deviationStr)
     }
 
     private fun toEntryList(sensorReadingList: List<SensorReadingUiModel>?): List<Entry>? {
@@ -166,13 +168,13 @@ class MainActivity : AppCompatActivity() {
         return entryList
     }
 
-    private fun plotGraph(chart: LineChart, entryList: List<Entry>?) {
+    private fun plotGraph(chart: LineChart, entryList: List<Entry>?, deviation: String) {
 
-        val lineDataSet = LineDataSet(entryList, "Dynamic Data").apply {
+        val lineDataSet = LineDataSet(entryList, deviation).apply {
             axisDependency = YAxis.AxisDependency.LEFT
             lineWidth = 1f
-            circleRadius = 2f
-            valueTextSize = 5f
+            circleRadius = 3f
+            valueTextSize = 7f
             valueTextColor = android.graphics.Color.BLACK
             color = android.graphics.Color.RED
             isHighlightEnabled = false
